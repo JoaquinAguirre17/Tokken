@@ -1,0 +1,58 @@
+.custom-card {
+  width: 18rem;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #0e2a3f, #193f54); /* Fondo azul/turquesa */
+  color: #e0f7fa; /* Texto claro */
+  border: 1px solid rgba(0, 255, 255, 0.5); /* Borde luminoso */
+  margin: 15px;
+  display: flex; /* Habilita flexbox */
+  flex-direction: column; /* Apila los elementos en columna */
+  justify-content: space-between; /* Distribuye espacio entre los elementos */
+  align-items: center; /* Centra horizontalmente */
+}
+
+.custom-card-img {
+  border-radius: 10px;
+  margin-bottom: 1rem;
+ 
+  height: 200px;
+}
+
+.custom-card-body {
+  display: flex; /* Habilita flexbox */
+  flex-direction: column; /* Apila los elementos en columna */
+  align-items: center; /* Centra horizontalmente los elementos */
+  justify-content: center; /* Centra verticalmente los elementos */
+  text-align: center;
+}
+
+.custom-card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #00e5ff; /* Azul neón */
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.8); /* Efecto de luz en el texto */
+}
+
+.custom-card-text {
+  color: #81d4fa; /* Azul más claro */
+  margin: 0.5rem 0;
+  text-shadow: 0 0 5px rgba(0, 229, 255, 0.4); /* Efecto de luz sutil en el texto */
+}
+
+.custom-card-button {
+  background-color: #00bcd4; /* Turquesa */
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.6), 0 0 30px rgba(0, 255, 255, 0.4); /* Sombra luminosa */
+  text-transform: uppercase;
+  color: #fff;
+  transition: all 0.3s ease; /* Animación suave */
+  cursor: pointer;
+  margin-top: auto; /* Empuja hacia la parte inferior */
+}
+
+.custom-card-button:hover {
+  background-color: #0097a7; /* Azul más oscuro */
+  box-shadow: 0 0 25px rgba(0, 255, 255, 1), 0 0 50px rgba(0, 255, 255, 0.8); /* Efecto neón más brillante */
+}

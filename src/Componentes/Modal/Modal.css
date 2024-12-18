@@ -1,0 +1,59 @@
+/* Estilos del Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #1c1c1c;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    text-align: center;
+}
+
+.payment-methods {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.pagos {
+    width:100px;
+    height: 100px;
+    object-fit: center;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    transition: transform 0.3s ease;
+}
+
+.payment-img:hover {
+    transform: scale(1.1);
+}
+
+.close-button {
+    background-color: #ff4d4d;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+.close-button:hover {
+    background-color: #ff1a1a;
+}
