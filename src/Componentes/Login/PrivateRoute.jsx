@@ -6,7 +6,7 @@ const PrivateRoute = ({ children }) => {
 
   // Si no hay token, redirige al login
   if (!token) {
-    return <Navigate to="/" />;
+    return <Navigate to="/admin" />;
   }
 
   // Si hay token, permite el acceso a la ruta protegida

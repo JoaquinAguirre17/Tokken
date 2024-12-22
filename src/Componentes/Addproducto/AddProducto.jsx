@@ -45,9 +45,9 @@ const AddProduct = () => {
 
     try {
       // Subir la imagen
-      const imageResponse = await axios.post('https://appencuentro.pagliardini.com/wp-json/wp/v2/media', formData, {
+      const imageResponse = await axios.post('https://papayawhip-koala-105915.hostingersite.com/wp-json/wp/v2/media', formData, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`,
+          'Authorization': 'Basic ' + btoa('ck_680755a33acecf9d418d84a5c19ed42dcff24a19:cs_f2a41a6ee18a5e004f0f96990c89042758c671f8'),
           'Content-Type': 'multipart/form-data',
         },
       });
@@ -68,16 +68,22 @@ const AddProduct = () => {
         ],
       };
 
-      const response = await axios.post('https://appencuentro.pagliardini.com/wp-json/wc/v3/products', productData, {
+      const response = await axios.post('https://papayawhip-koala-105915.hostingersite.com/wp-json/wc/v3/products', productData, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`,
+          'Authorization': 'Basic ' + btoa('ck_680755a33acecf9d418d84a5c19ed42dcff24a19:cs_f2a41a6ee18a5e004f0f96990c89042758c671f8'),  // Usar autenticación básica para WooCommerce
           'Content-Type': 'application/json',
         },
       });
 
       console.log('Producto creado:', response.data);
     } catch (error) {
-      console.error('Error creando el producto:', error);
+      if (error.response) {
+        // Mostrar detalles del error si existe una respuesta
+        console.error('Error creando el producto:', error.response.data);
+      } else {
+        // Mostrar mensaje de error si no hay respuesta del servidor
+        console.error('Error creando el producto:', error.message);
+      }
     }
   };
 

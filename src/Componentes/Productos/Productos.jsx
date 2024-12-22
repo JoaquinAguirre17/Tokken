@@ -10,48 +10,69 @@ const Productos = () => {
   const [error, setError] = useState(null); // Estado para errores
   const { category, subcategory } = useParams(); // Obtener parámetros dinámicos
 
-  const apiUrl = 'https://appencuentro.pagliardini.com/wp-json/wc/v3/products';
-  const credentials = btoa('ck_6c9332054ef29d8f8700cd91c8a61991a3112dda:cs_efa0c320611d3a7ee041d8fef15bc71b6c068590');
-
   useEffect(() => {
+    // Función asíncrona para obtener los productos
     const fetchProducts = async () => {
-      setLoading(true);
-      setError(null);
-
       try {
-        const response = await fetch(apiUrl, {
-          headers: { 'Authorization': `Basic ${credentials}` },
+        const response = await fetch('https://papayawhip-koala-105915.hostingersite.com/wp-json/wc/v3/products', {
+          headers: {
+            'Authorization': 'Basic ' + btoa('ck_680755a33acecf9d418d84a5c19ed42dcff24a19:cs_f2a41a6ee18a5e004f0f96990c89042758c671f8')  // Sustituir con las claves correctas
+          }
         });
 
-        if (!response.ok) throw new Error('Error al cargar productos');
+        if (!response.ok) {
+          throw new Error(`Error en la solicitud: ${response.statusText}`);
+        }
 
         const data = await response.json();
+        console.log('Productos obtenidos:', data); // Verifica los productos obtenidos
 
         // Filtrar productos por categoría y subcategoría
         const filteredProducts = data.filter((product) => {
-          const normalizedCategory = product.categories[0]?.name
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .toLowerCase();
+          // Verificar si el producto tiene categorías
+          if (!product.categories || product.categories.length === 0) return false;
 
+          // Normalizar las categorías del producto
+          const normalizedCategories = product.categories.map((cat) =>
+            cat.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+          );
+
+          console.log('Categorias del producto:', normalizedCategories); // Verifica las categorías de cada producto
+          console.log('Categoría de filtro:', category, 'Subcategoría de filtro:', subcategory); // Muestra los filtros actuales
+
+          // Normalizar las categorías de los parámetros de URL
           const normalizedCategoryFilter = category
-            ? category.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+            ? category.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+            : '';
+          const normalizedSubcategoryFilter = subcategory
+            ? subcategory.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
             : '';
 
-          return normalizedCategory === normalizedCategoryFilter;
+          console.log('Categoría filtrada:', normalizedCategoryFilter);
+          console.log('Subcategoría filtrada:', normalizedSubcategoryFilter);
+
+          // Filtrar los productos que coincidan con la categoría o subcategoría
+          const categoryMatch = normalizedCategories.includes(normalizedCategoryFilter);
+          const subcategoryMatch = normalizedSubcategoryFilter
+            ? normalizedCategories.includes(normalizedSubcategoryFilter)
+            : true; // Si no hay subcategoría, no filtrar por subcategoría
+
+          console.log('Coincide con categoría:', categoryMatch, 'Coincide con subcategoría:', subcategoryMatch);
+
+          return categoryMatch && subcategoryMatch;
         });
 
         setProducts(filteredProducts);
       } catch (err) {
         console.error('Error al obtener productos:', err);
-        setError('Error al cargar productos. Inténtalo de nuevo.');
+        setError(`Error al cargar productos. Detalles: ${err.message}`);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProducts();
-  }, [category, subcategory]);
+  }, [category, subcategory]); // Dependencias para recargar la función cuando cambian las categorías
 
   // Loading spinner
   if (loading) {

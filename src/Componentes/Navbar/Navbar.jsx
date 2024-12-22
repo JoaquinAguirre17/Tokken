@@ -69,7 +69,7 @@ function NavbarOffcanvas() {
                     <LinkContainer to="/telefonia/cargadores" onClick={handleLinkClick}>
                       <Dropdown.Item>Cargadores</Dropdown.Item>
                     </LinkContainer>
-                    <LinkContainer to="/telefonia/vidrios-hidrogen" onClick={handleLinkClick}>
+                    <LinkContainer to="/telefonia/vidrios hidrogel" onClick={handleLinkClick}>
                       <Dropdown.Item>Vidrios Hidrogen</Dropdown.Item>
                     </LinkContainer>
                     <LinkContainer to="/telefonia/soportes-auto" onClick={handleLinkClick}>
@@ -87,10 +87,10 @@ function NavbarOffcanvas() {
                 <Dropdown>
                   <Dropdown.Toggle className="split-dropdown-toggle" id="dropdown-gamer" />
                   <Dropdown.Menu>
-                    <LinkContainer to="/gamer/auriculares" onClick={handleLinkClick}>
+                    <LinkContainer to="/gamer/auricularesGamer" onClick={handleLinkClick}>
                       <Dropdown.Item>Auriculares Gamer</Dropdown.Item>
                     </LinkContainer>
-                    <LinkContainer to="/gamer/consolas-retro" onClick={handleLinkClick}>
+                    <LinkContainer to="/gamer/consolas" onClick={handleLinkClick}>
                       <Dropdown.Item>Consolas Retro</Dropdown.Item>
                     </LinkContainer>
                     <LinkContainer to="/gamer/mouse" onClick={handleLinkClick}>
@@ -99,10 +99,10 @@ function NavbarOffcanvas() {
                     <LinkContainer to="/gamer/teclados" onClick={handleLinkClick}>
                       <Dropdown.Item>Teclados</Dropdown.Item>
                     </LinkContainer>
-                    <LinkContainer to="/gamer/kit-gamer" onClick={handleLinkClick}>
+                    <LinkContainer to="/gamer/kit gamer" onClick={handleLinkClick}>
                       <Dropdown.Item>Kit Gamer</Dropdown.Item>
                     </LinkContainer>
-                    <LinkContainer to="/gamer/cables-consolas" onClick={handleLinkClick}>
+                    <LinkContainer to="/gamer/cables de consolas" onClick={handleLinkClick}>
                       <Dropdown.Item>Cables de Consolas</Dropdown.Item>
                     </LinkContainer>
                   </Dropdown.Menu>
@@ -126,7 +126,7 @@ function NavbarOffcanvas() {
                     <LinkContainer to="/electronica/auriculares-cables" onClick={handleLinkClick}>
                       <Dropdown.Item>Auriculares con Cables</Dropdown.Item>
                     </LinkContainer>
-                    <LinkContainer to="/electronica/pendrive" onClick={handleLinkClick}>
+                    <LinkContainer to="/electronica/pendrivee" onClick={handleLinkClick}>
                       <Dropdown.Item>Pendrive</Dropdown.Item>
                     </LinkContainer>
                     <LinkContainer to="/electronica/memoria-ssd" onClick={handleLinkClick}>

@@ -1,36 +1,39 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Para redirigir a rutas
-import axios from 'axios'; // Para las peticiones HTTP
-import './Login.css'
+import { useNavigate } from 'react-router-dom'; // To redirect to routes
+import './Login.css';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const navigate = useNavigate(); // Inicializa useNavigate para redirigir después del login
+  const [username, setUsername] = useState(''); // State for username
+  const [password, setPassword] = useState(''); // State for password
+  const [message, setMessage] = useState(''); // State for error/success message
+  const navigate = useNavigate(); // For navigation
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      // Solicitud POST para obtener el token con la API
-      const response = await axios.post('https://appencuentro.pagliardini.com/wp-json/jwt-auth/v1/token', {
+  const handleSubmit = (e) => {
+    e.preventDefault(); // Prevent default form submission behavior
+
+    fetch('https://papayawhip-koala-105915.hostingersite.com/wp-json/jwt-auth/v1/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
         username: username,
         password: password,
+      }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          navigate('/admin'); // Or use window.location.href if you prefer
+        } else {
+          setMessage('Login failed: ' + data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        setMessage('Error occurred during login');
       });
-
-      if (response.data.token) {
-        // Si obtenemos el token, lo guardamos en el localStorage
-        const token = response.data.token;
-        localStorage.setItem('jwt_token', token); // Guardamos el token
-
-        // Mensaje de éxito y redirigimos a la página protegida
-        setMessage('Login exitoso!');
-        navigate('/admin'); // Redirige al área protegida
-      }
-    } catch (error) {
-      setMessage('Error: Usuario o contraseña incorrectos.');
-      console.error(error);
-    }
   };
 
   return (
