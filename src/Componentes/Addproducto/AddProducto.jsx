@@ -3,7 +3,7 @@ import { useCategories } from '../Contex/CategoriesContext';  // Importar el con
 import axios from 'axios';
 import './AddProducto.css';
 
-const AddProduct = () => {
+const AddProduct = ({ isOpen, closeModal }) => {
   const { categories, loading, error } = useCategories();  // Desestructuramos el contexto
   const [subcategories, setSubcategories] = useState([]);  // Estado local para las subcategorías
   const [name, setName] = useState('');
@@ -60,81 +60,84 @@ const AddProduct = () => {
         regular_price: price,
         stock_quantity: stock,
         categories: [
-          { id: category },  // Enviar la categoría seleccionada
-          { id: subcategory },  // Enviar la subcategoría seleccionada
+          { id: category },
+          { id: subcategory },
         ],
         images: [
-          { id: imageId },  // ID de la imagen subida
+          { id: imageId },
         ],
       };
 
       const response = await axios.post('https://papayawhip-koala-105915.hostingersite.com/wp-json/wc/v3/products', productData, {
         headers: {
-          'Authorization': 'Basic ' + btoa('ck_680755a33acecf9d418d84a5c19ed42dcff24a19:cs_f2a41a6ee18a5e004f0f96990c89042758c671f8'),  // Usar autenticación básica para WooCommerce
+          'Authorization': 'Basic ' + btoa('ck_680755a33acecf9d418d84a5c19ed42dcff24a19:cs_f2a41a6ee18a5e004f0f96990c89042758c671f8'),
           'Content-Type': 'application/json',
         },
       });
 
       console.log('Producto creado:', response.data);
+      closeModal();  // Cerrar el modal después de crear el producto
     } catch (error) {
       if (error.response) {
-        // Mostrar detalles del error si existe una respuesta
         console.error('Error creando el producto:', error.response.data);
       } else {
-        // Mostrar mensaje de error si no hay respuesta del servidor
         console.error('Error creando el producto:', error.message);
       }
     }
   };
 
-  // Mostrar carga o errores si es necesario
   if (loading) return <p>Cargando categorías...</p>;
   if (error) return <p>Error al cargar categorías: {error}</p>;
 
+  if (!isOpen) return null;
+
   return (
-    <div>
-      <h2>Añadir Producto</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Nombre del Producto</label>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
-        </div>
-        <div>
-          <label>Descripción</label>
-          <textarea value={description} onChange={(e) => setDescription(e.target.value)} required />
-        </div>
-        <div>
-          <label>Precio</label>
-          <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} required />
-        </div>
-        <div>
-          <label>Stock</label>
-          <input type="number" value={stock} onChange={(e) => setStock(e.target.value)} required />
-        </div>
-        <div>
-          <label>Categoría</label>
-          <select value={category} onChange={handleCategoryChange} required>
-            <option value="">Seleccionar categoría</option>
-            {categories.filter(cat => cat.parent === 0).map(cat => (
-              <option key={cat.id} value={cat.id}>{cat.name}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label>Subcategoría</label>
-          <select value={subcategory} onChange={handleSubcategoryChange} required>
-            <option value="">Seleccionar subcategoría</option>
-            {subcategories.map(sub => (
-              <option key={sub.id} value={sub.id}>{sub.name}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label>Imagen</label>
-          <input type="file" onChange={handleImageChange} required />
-        </div>
-        <button type="submit">Añadir Producto</button>
-      </form>
+    <div className="modal-overlay">
+      <div className={`modal-content ${isOpen ? 'show' : ''}`}>
+        <button className="modal-close" onClick={closeModal}>X</button>
+        <h2>Añadir Producto</h2>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label>Nombre del Producto</label>
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+          </div>
+          <div>
+            <label>Descripción</label>
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} required />
+          </div>
+          <div>
+            <label>Precio</label>
+            <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} required />
+          </div>
+          <div>
+            <label>Stock</label>
+            <input type="number" value={stock} onChange={(e) => setStock(e.target.value)} required />
+          </div>
+          <div>
+            <label>Categoría</label>
+            <select value={category} onChange={handleCategoryChange} required>
+              <option value="">Seleccionar categoría</option>
+              {categories.filter(cat => cat.parent === 0).map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label>Subcategoría</label>
+            <select value={subcategory} onChange={handleSubcategoryChange} required>
+              <option value="">Seleccionar subcategoría</option>
+              {subcategories.map(sub => (
+                <option key={sub.id} value={sub.id}>{sub.name}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label>Imagen</label>
+            <input type="file" onChange={handleImageChange} required />
+          </div>
+          <button type="submit">Añadir Producto</button>
+        </form>
+      </div>
     </div>
   );
 };
