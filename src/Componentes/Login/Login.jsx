@@ -1,39 +1,40 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // To redirect to routes
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
 const Login = () => {
-  const [username, setUsername] = useState(''); // State for username
-  const [password, setPassword] = useState(''); // State for password
-  const [message, setMessage] = useState(''); // State for error/success message
-  const navigate = useNavigate(); // For navigation
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    fetch('https://papayawhip-koala-105915.hostingersite.com/wp-json/jwt-auth/v1/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: username,
-        password: password,
-      }),
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-          navigate('/admin'); // Or use window.location.href if you prefer
-        } else {
-          setMessage('Login failed: ' + data.message);
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        setMessage('Error occurred during login');
+    try {
+      const response = await fetch('https://papayawhip-koala-105915.hostingersite.com/wp-json/jwt-auth/v1/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password,
+        }),
       });
+
+      const data = await response.json();
+
+      if (response.ok && data.token) {
+        localStorage.setItem('token', data.token);
+        navigate('/admin'); // Redirigir al panel de administración
+      } else {
+        setMessage(`Error: ${data.message || 'Credenciales incorrectas'}`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setMessage('Hubo un error al intentar iniciar sesión.');
+    }
   };
 
   return (

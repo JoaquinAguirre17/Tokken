@@ -89,7 +89,7 @@ const AddProduct = ({ isOpen, closeModal }) => {
   if (loading) return <p>Cargando categorías...</p>;
   if (error) return <p>Error al cargar categorías: {error}</p>;
 
-  if (!isOpen) return null;
+  if (!isOpen) return null;  // Si isOpen es false, el modal no se renderiza
 
   return (
     <div className="modal-overlay">
