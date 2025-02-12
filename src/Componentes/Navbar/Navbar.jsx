@@ -111,7 +111,7 @@ function NavbarOffcanvas() {
 
               {/* Botón de la categoría "Electrónica" con Dropdown */}
               <ButtonGroup className="split-btn-group">
-                <LinkContainer to="/electronica" onClick={handleLinkClick}>
+                <LinkContainer to="/Electronics" onClick={handleLinkClick}>
                   <Button className="split-dropdown-btn">ELECTRÓNICA</Button>
                 </LinkContainer>
                 <Dropdown>

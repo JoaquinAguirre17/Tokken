@@ -10,24 +10,17 @@ const Productos = () => {
   const [error, setError] = useState(null); // Estado para errores
   const { category, subcategory } = useParams(); // Obtener parámetros dinámicos
 
-  // 🚀 Tu store_id y access_token de Tiendanube
-  const STORE_ID = "15675";  // Reemplaza con tu ID de tienda
-  const ACCESS_TOKEN = "c1441657590c1a49bed0b7da57b62a81f638ee8d80e6fe9a"; // Tu access token
-
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await fetch(
-          `https://tokkenback.onrender.com/api/products`,  // Cambia a la URL de tu backend en Render
+          `tokkenbackshopify:5000`,  // Cambia a la URL de tu backend local
           {
             headers: {
-              "Authorization": `bearer ${ACCESS_TOKEN}`,
-              "User-Agent": "MiApp (tokkencba@gmail.com)", 
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
             }
           }
         );
-        
 
         if (!response.ok) {
           throw new Error(`Error en la solicitud: ${response.statusText}`);
@@ -36,9 +29,8 @@ const Productos = () => {
         const data = await response.json();
         console.log("Productos obtenidos:", data);
 
-        // 🔹 Filtrar productos por categoría y subcategoría
+        // Filtrar productos por categoría y subcategoría
         const filteredProducts = data.filter((product) => { 
-          // Verificar si el producto tiene categorías
           if (!product.categories || product.categories.length === 0) return false;
 
           const normalizedCategories = product.categories.map((cat) =>
@@ -72,7 +64,6 @@ const Productos = () => {
     fetchProducts();
   }, [category, subcategory]);
 
-  // ⏳ Mostrar Loading Spinner
   if (loading) {
     return (
       <div className="loading-container">
@@ -81,10 +72,8 @@ const Productos = () => {
     );
   }
 
-  // ❌ Mostrar error
   if (error) return <p className="error-message">{error}</p>;
 
-  // ℹ️ No hay productos
   if (products.length === 0) {
     return (
       <div className="no-products-message">
