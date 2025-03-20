@@ -1,5 +1,5 @@
 .btn-carrito {
-    background-color:#1e3a54; /* Azul */
+    background-color: #1e3a54; /* Azul */
     border: none;
     color: #81d4fa;
     padding: 10px;
@@ -10,10 +10,11 @@
     font-size: 20px;
     margin: 4px 2px;
     cursor: pointer;
-    border-radius: 50%;
+    border-radius: 20px; /* Bordes cuadrados */
     transition: background-color 0.3s;
 }
 
-button:hover {
+.btn-carrito:hover {
     background-color: #005f73; /* Azul más oscuro */
 }
+

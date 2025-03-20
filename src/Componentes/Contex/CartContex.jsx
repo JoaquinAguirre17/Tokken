@@ -1,4 +1,4 @@
-import { createContext, useState, useContext } from 'react';
+import { createContext, useState, useContext, useEffect } from 'react';
 
 const CartContext = createContext();
 
@@ -7,19 +7,33 @@ export const useCart = () => useContext(CartContext);
 export const CartProvider = ({ children }) => {
     const [cart, setCart] = useState([]);
 
-    const addItem = (product, count) => {
-        setCart(prevCart => {
-            const existingItemIndex = prevCart.findIndex(item => item.id === product.id);
+    // Verifica si el carrito se actualiza correctamente
+    useEffect(() => {
+        console.log("🛒 Carrito actualizado:", cart);
+    }, [cart]);  // Se ejecuta cada vez que cambia el carrito
 
-            if (existingItemIndex !== -1) {
-                return prevCart.map((item, index) =>
-                    index === existingItemIndex
+    const addItem = (product, count) => {
+        console.log("📩 Producto recibido en addItem:", product);
+        console.log("📦 Carrito antes de agregar:", cart);
+
+        setCart(prevCart => {
+            const existingItem = prevCart.find(item => item.id === product.id);
+    
+            let updatedCart;
+            if (existingItem) {
+                console.log("🔄 Producto ya en el carrito, sumando cantidad.");
+                updatedCart = prevCart.map(item =>
+                    item.id === product.id
                         ? { ...item, count: item.count + count }
                         : item
                 );
             } else {
-                return [...prevCart, { ...product, count }];
+                console.log("🆕 Producto nuevo, agregándolo al carrito.");
+                updatedCart = [...prevCart, { ...product, count }];
             }
+    
+            console.log("📦 Carrito después de agregar:", updatedCart);
+            return updatedCart;
         });
     };
 
@@ -27,12 +41,17 @@ export const CartProvider = ({ children }) => {
         setCart(prevCart => prevCart.filter(product => product.id !== itemId));
     };
 
-    const totalCountProducts = () => cart.reduce((acc, item) => acc + item.count, 0);
+    const totalCountProducts = () => cart.length; // Solo contar productos únicos en el carrito
+
 
     const getTotalPrice = () => {
-        return cart.reduce((total, item) => total + item.precio * item.count, 0);
-    };
-
+        return cart.reduce((total, item) => {
+          const precio = parseFloat(item.variants[0]?.price) || 0; // Asegúrate de que el precio sea un número
+          const cantidad = item.count || 0; // Asegúrate de que la cantidad sea un número
+          return total + precio * cantidad;
+        }, 0);
+      };
+      
     const clearCart = () => {
         setCart([]);
     };

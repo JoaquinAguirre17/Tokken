@@ -1,10 +1,21 @@
-img{
-    width:100%;
-    border-radius: 20px;
-    height: 400px;
-    
+img {
+  width: 100%;
+  border-radius: 20px;
+  height: 400px;
 }
-.carouselGeneral{
-   
-    border-radius: 20px;
+.carouselGeneral {
+  border-radius: 20px;
+}
+.imagen-chica {
+  display: none; /* Oculta la imagen pequeña por defecto */
+}
+
+@media (max-width: 768px) {
+  /* Cuando la pantalla sea menor a 768px */
+  .imagen-grande {
+    display: none; /* Oculta la imagen grande */
+  }
+  .imagen-chica {
+    display: block; /* Muestra la imagen pequeña */
+  }
 }

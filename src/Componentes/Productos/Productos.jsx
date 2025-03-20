@@ -5,22 +5,17 @@ import './Productos.css';
 import BotonComponente from '../Boton/BotonComponente';
 
 const Productos = () => {
-  const [products, setProducts] = useState([]); // Estado para productos
-  const [loading, setLoading] = useState(true); // Estado para loading
-  const [error, setError] = useState(null); // Estado para errores
-  const { category, subcategory } = useParams(); // Obtener parámetros dinámicos
+  const { category, subcategory } = useParams(); // Obtenemos los parámetros de la URL
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(
-          `tokkenbackshopify:5000`,  // Cambia a la URL de tu backend local
-          {
-            headers: {
-              "Content-Type": "application/json",
-            }
-          }
-        );
+        const response = await fetch(`https://tokkenbackshopify.onrender.com/api/shopify/products`, {
+          headers: { "Content-Type": "application/json" }
+        });
 
         if (!response.ok) {
           throw new Error(`Error en la solicitud: ${response.statusText}`);
@@ -29,28 +24,29 @@ const Productos = () => {
         const data = await response.json();
         console.log("Productos obtenidos:", data);
 
-        // Filtrar productos por categoría y subcategoría
-        const filteredProducts = data.filter((product) => { 
-          if (!product.categories || product.categories.length === 0) return false;
+        let filteredProducts = data.products;
 
-          const normalizedCategories = product.categories.map((cat) =>
-            cat.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+        // Filtrar por categoría si existe (ignorando mayúsculas)
+        if (category) {
+          filteredProducts = filteredProducts.filter(
+            p => p.product_type?.toLowerCase() === category.toLowerCase()
           );
+        }
 
-          const normalizedCategoryFilter = category
-            ? category.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
-            : '';
-          const normalizedSubcategoryFilter = subcategory
-            ? subcategory.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
-            : '';
+        // Filtrar por subcategoría (tag) si existe (ignorando mayúsculas)
+        if (subcategory) {
+          filteredProducts = filteredProducts.filter(p => {
+            let productTags = [];
 
-          const categoryMatch = normalizedCategories.includes(normalizedCategoryFilter);
-          const subcategoryMatch = normalizedSubcategoryFilter
-            ? normalizedCategories.includes(normalizedSubcategoryFilter)
-            : true;
+            if (typeof p.tags === "string") {
+              productTags = p.tags.split(",").map(tag => tag.trim().toLowerCase());
+            } else if (Array.isArray(p.tags)) {
+              productTags = p.tags.map(tag => tag.toLowerCase());
+            }
 
-          return categoryMatch && subcategoryMatch;
-        });
+            return productTags.includes(subcategory.toLowerCase());
+          });
+        }
 
         setProducts(filteredProducts);
       } catch (err) {
@@ -67,42 +63,46 @@ const Productos = () => {
   if (loading) {
     return (
       <div className="loading-container">
-        <ReactLoading type="spin" color="orange" height={100} width={100} />
+        <ReactLoading type="spin" color="blue" height={100} width={100} />
       </div>
     );
   }
 
   if (error) return <p className="error-message">{error}</p>;
 
-  if (products.length === 0) {
-    return (
-      <div className="no-products-message">
-        <p>No hay productos disponibles en la categoría {category} {subcategory && ` - ${subcategory}`}.</p>
-      </div>
-    );
-  }
-
   return (
     <div className="products-container">
-      <h2 className="products-title">
-        Productos de {category} {subcategory && ` - ${subcategory}`}
-      </h2>
-      <div className="products-grid">
-        {products.map((product) => (
-          <div className="product-card" key={product.id}>
-            <img
-              className="product-image"
-              src={product.images && product.images.length > 0 ? product.images[0].src : ''}
-              alt={product.name}
-            />
-            <div className="product-details">
-              <h5 className="product-name">{product.name}</h5>
-              <p className="product-price">Precio: ${product.price}</p>
+      <h2 className="products-title">Productos Disponibles</h2>
+
+      {products.length === 0 ? (
+        <div className="no-products-message">
+          <p>No hay productos disponibles en esta categoría/subcategoría.</p>
+        </div>
+      ) : (
+        <div className="products-grid">
+          {products.map((product) => (
+            <div className="product-card" key={product.id}>
+              <img
+                className="product-image"
+                src={product.images?.length > 0 ? product.images[0].src : ''}
+                alt={product.title}
+              />
+              <div className="product-details">
+                <h5 className="product-name">{product.title}</h5>
+                <p className="product-price">Precio: ${product.variants[0]?.price}</p>
+                <p className="product-stock">
+                  {product.variants[0]?.inventory_quantity !== undefined
+                    ? product.variants[0]?.inventory_quantity > 0
+                      ? `Stock disponible: ${product.variants[0].inventory_quantity}`
+                      : "Sin stock"
+                    : "Stock no disponible"}
+                </p>
+              </div>
+              <BotonComponente nombre={'Ver Detalle'} ruta={`/detalle/${product.id}`} />
             </div>
-            <BotonComponente nombre={'Ver Detalle'} ruta={`/detalle/${product.id}`} />
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

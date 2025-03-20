@@ -5,6 +5,9 @@ import { Link } from "react-router-dom";
 import './Home.css'
 import React, { useState } from 'react';
 import Modal from '../Modal/Modal'; // Asegúrate de que la ruta sea correcta
+import BlurText from "../BlurText/BlurText";
+
+
 
 
 
@@ -19,6 +22,10 @@ function Home() {
         setIsModalOpen(false);
     };
 
+    const handleAnimationComplete = () => {
+        console.log("¡Animación completada!");
+    };
+
     return (
         <>
             <div className="container">
@@ -27,7 +34,7 @@ function Home() {
                 </div>
                 <div className="seccionCategorias">
                     <Link to="/telefonia">
-                        <button className="botonTelefonia"></button>
+                        <button className="botonTelefonia "></button>
                     </Link>
                     <Link to="/electronica">
                         <button className="botonElectronica"></button>
@@ -39,7 +46,7 @@ function Home() {
 
                 <div className="productosDestacados">
                     <div className="tituloDestacados">
-                        <h2>PRODUCTOS DESTACADOS</h2>
+                        <h2>TENDENCIAS</h2>
                     </div>
                     <div className="cardsDestacados">
                         <CardComponents imagen='https://www.syncfusion.com/blogs/wp-content/uploads/2022/10/React-Router-vs.-React-Router-DOM.png' titulo='Producto 1' texto='Hola mundo hoy es sabado' />
@@ -49,6 +56,7 @@ function Home() {
                         <CardComponents imagen='https://www.syncfusion.com/blogs/wp-content/uploads/2022/10/React-Router-vs.-React-Router-DOM.png' titulo='Producto 3' texto='Hola mundo hoy es sabado' />
                     </div>
                 </div>
+
                 <div className="redesyubicacion">
                     <div className="redes">
                         <ul className="socialshome">
@@ -95,7 +103,6 @@ function Home() {
                     </button>
 
                 </div>
-
 
             </div>
         </>

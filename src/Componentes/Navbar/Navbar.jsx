@@ -66,6 +66,9 @@ function NavbarOffcanvas() {
                     <LinkContainer to="/telefonia/accesorios" onClick={handleLinkClick}>
                       <Dropdown.Item>Accesorios</Dropdown.Item>
                     </LinkContainer>
+                    <LinkContainer to="/telefonia/cables" onClick={handleLinkClick}>
+                      <Dropdown.Item>Cables</Dropdown.Item>
+                    </LinkContainer>
                     <LinkContainer to="/telefonia/cargadores" onClick={handleLinkClick}>
                       <Dropdown.Item>Cargadores</Dropdown.Item>
                     </LinkContainer>
@@ -111,7 +114,7 @@ function NavbarOffcanvas() {
 
               {/* Botón de la categoría "Electrónica" con Dropdown */}
               <ButtonGroup className="split-btn-group">
-                <LinkContainer to="/Electronics" onClick={handleLinkClick}>
+                <LinkContainer to="/electronica" onClick={handleLinkClick}>
                   <Button className="split-dropdown-btn">ELECTRÓNICA</Button>
                 </LinkContainer>
                 <Dropdown>
@@ -143,9 +146,6 @@ function NavbarOffcanvas() {
             {/* Carrito y Login al final de la barra de navegación */}
             <Nav className="ms-auto custom-end-nav">
               <CardWidgetComponente/>
-              <Nav.Link as={Link} to="/login" className="custom-icon" onClick={handleLinkClick}>
-                <FaUser size={24} />
-              </Nav.Link>
             </Nav>
           </Offcanvas.Body>
         </Navbar.Offcanvas>

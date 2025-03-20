@@ -37,7 +37,7 @@
 }
 
 .botonGamer {
-  background-image: url("../../../public/img/gamer.png");
+  background-image: url("../../../public/img/gamerCategoria.jpg");
   background-size: contain;
   background-position: center;
   border-radius: 50%;
@@ -52,7 +52,7 @@
 }
 
 .botonElectronica {
-  background-image: url("../../../public/img/ELECTRONICA.PNG");
+  background-image: url("../../../public/img/electronicaCategoria.jpg");
   background-size: cover;
   background-position: center;
   border-radius: 50%;
@@ -67,7 +67,7 @@
 }
 
 .botonTelefonia {
-  background-image: url("../../../public/img/TELEFONIA.PNG");
+  background-image: url("../../../public/img/telefoniaCategoria.jpg");
   background-size: contain;
   background-position: center;
   border-radius: 50%;
@@ -79,6 +79,7 @@
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease,
     box-shadow 0.3s ease;
+  
 }
 
 .seccionCategorias button:hover {
@@ -97,16 +98,33 @@
   margin-bottom: 50px;
   padding: 20px;
   border-radius: 20px;
+  background-color: #1e3a54;
+}
+
+/* Animación para el título */
+@keyframes slideFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .tituloDestacados h2 {
   font-size: xxx-large;
   font-family: "Courier New", Courier, monospace;
   font-weight: bold;
-  color: #0a0a0a;
+  color: white;
   text-transform: uppercase;
   text-align: center;
+
+  /* Aplica la animación */
+  animation: slideFadeIn 1.5s ease-out;
 }
+
 
 .cardsDestacados {
   display: flex;
@@ -157,11 +175,53 @@
   color: white;
 }
 
+/* Animación de Fade-in con Zoom */
+@keyframes fadeInZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Efecto de brillo animado */
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 10px rgba(0, 128, 255, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 128, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(0, 128, 255, 0.4);
+  }
+}
+
+/* Estilos para el mapa */
 .redesyubicacion .maps {
   flex: 2;
   height: 300px;
-  border: none;
+  border: 3px solid transparent; /* Borde transparente por defecto */
+  border-radius: 20px; /* Esquinas redondeadas */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Sombra inicial */
+  overflow: hidden;
+  
+  /* Animación de entrada */
+  animation: fadeInZoom 1.5s ease-out;
+  transition: transform 0.5s ease, border 0.5s ease, box-shadow 0.5s ease;
 }
+
+/* Hover: Efecto de zoom + cambio de borde y brillo */
+.redesyubicacion .maps:hover {
+  transform: scale(1.1); /* Zoom suave */
+  border: 3px solid #0080ff; /* Borde azul */
+  animation: glow 1.5s infinite alternate; /* Brillo animado */
+}
+
+
 
 .maps iframe {
   width: 100%;
@@ -260,6 +320,7 @@ button .text a {
 button .text a:hover {
   text-decoration: underline;
 }
+/* Animacion de scroll*/
 
 
 

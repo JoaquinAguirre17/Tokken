@@ -1,20 +1,16 @@
 import React from 'react';
 import { useCart } from '../Contex/CartContex';
-
 import BotonComponente from '../Boton/BotonComponente';
 
 function CardWidgetComponente() {
-   const {totalCountProducts}=useCart();
+    const { totalCountProducts } = useCart();  // Usar el totalCountProducts desde el contexto
 
     return (
         <div>
-         <BotonComponente nombre={`🛒`} ruta={'/carrito'} contador={totalCountProducts()} />
-        
+            {/* Asegurarse de pasar el número de productos directamente */}
+            <BotonComponente nombre={`🛒`} ruta={'/carrito'} contador={totalCountProducts()} />
         </div>
     );
 }
 
 export default CardWidgetComponente;
-
-
-

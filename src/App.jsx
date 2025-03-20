@@ -9,10 +9,10 @@ import NavbarOffcanvas from './Componentes/Navbar/Navbar.jsx';
 import { CartProvider } from './Componentes/Contex/CartContex.jsx';
 import Productos from './Componentes/Productos/Productos.jsx';
 import Login from './Componentes/Login/Login.jsx';
-import PrivateRoute from './Componentes/Login/PrivateRoute.jsx';
-import ProductosLogin from './Componentes/ProdcutosLogin/ProductosLogin.jsx';
-import { CategoriesProvider } from './Componentes/Contex/CategoriesContext.jsx';
 
+import { CategoriesProvider } from './Componentes/Contex/CategoriesContext.jsx';
+import DetalleProducto from './Componentes/DetalleProducto/DetalleProducto.jsx';
+import Carrito from './Componentes/Carrito/Carrito.jsx';
 
 function App() {
   return (
@@ -23,13 +23,11 @@ function App() {
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='/login' element={<Login />} />
-            <Route path='/admin' element={<PrivateRoute><ProductosLogin /></PrivateRoute>} />
-
+            <Route path="/carrito" element={<Carrito />} />
             {/* Ruta dinámica para categorías y subcategorías */}
             <Route path='/:category' element={<Productos />} />
             <Route path='/:category/:subcategory' element={<Productos />} />
-
-
+            <Route path="/detalle/:id" element={<DetalleProducto />} />
             {/* Ruta de fallback */}
             <Route
               path='*'
