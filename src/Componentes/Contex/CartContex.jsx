@@ -5,60 +5,83 @@ const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
-    const [cart, setCart] = useState([]);
+  // 🔄 Cargar desde sessionStorage al iniciar
+  const [cart, setCart] = useState(() => {
+    const storedCart = sessionStorage.getItem('cart');
+    return storedCart ? JSON.parse(storedCart) : [];
+  });
 
-    // Verifica si el carrito se actualiza correctamente
-    useEffect(() => {
-        console.log("🛒 Carrito actualizado:", cart);
-    }, [cart]);  // Se ejecuta cada vez que cambia el carrito
+  // 💾 Guardar carrito en sessionStorage cada vez que cambie
+  useEffect(() => {
+    sessionStorage.setItem('cart', JSON.stringify(cart));
+    console.log('🛒 Carrito actualizado en sessionStorage:', cart);
+  }, [cart]);
 
-    const addItem = (product, count) => {
-        console.log("📩 Producto recibido en addItem:", product);
-        console.log("📦 Carrito antes de agregar:", cart);
+  const addItem = (product, count) => {
+    setCart(prevCart => {
+      const existingItem = prevCart.find(item => item.id === product.id);
+      if (existingItem) {
+        return prevCart.map(item =>
+          item.id === product.id ? { ...item, count: item.count + count } : item
+        );
+      } else {
+        return [...prevCart, { ...product, count }];
+      }
+    });
+  };
 
-        setCart(prevCart => {
-            const existingItem = prevCart.find(item => item.id === product.id);
-    
-            let updatedCart;
-            if (existingItem) {
-                console.log("🔄 Producto ya en el carrito, sumando cantidad.");
-                updatedCart = prevCart.map(item =>
-                    item.id === product.id
-                        ? { ...item, count: item.count + count }
-                        : item
-                );
-            } else {
-                console.log("🆕 Producto nuevo, agregándolo al carrito.");
-                updatedCart = [...prevCart, { ...product, count }];
-            }
-    
-            console.log("📦 Carrito después de agregar:", updatedCart);
-            return updatedCart;
-        });
-    };
+  const removeItem = (itemId) => {
+    setCart(prevCart => prevCart.filter(product => product.id !== itemId));
+  };
 
-    const removeItem = (itemId) => {
-        setCart(prevCart => prevCart.filter(product => product.id !== itemId));
-    };
-
-    const totalCountProducts = () => cart.length; // Solo contar productos únicos en el carrito
-
-
-    const getTotalPrice = () => {
-        return cart.reduce((total, item) => {
-          const precio = parseFloat(item.variants[0]?.price) || 0; // Asegúrate de que el precio sea un número
-          const cantidad = item.count || 0; // Asegúrate de que la cantidad sea un número
-          return total + precio * cantidad;
-        }, 0);
-      };
-      
-    const clearCart = () => {
-        setCart([]);
-    };
-
-    return (
-        <CartContext.Provider value={{ cart, addItem, removeItem, totalCountProducts, getTotalPrice, clearCart }}>
-            {children}
-        </CartContext.Provider>
+  const clearCart = () => {
+    setCart([]);
+  };
+  const increaseQty = (id) => {
+    setCart(prev =>
+      prev.map(p => {
+        const stock = p.variants[0]?.inventory_quantity || 0;
+        if (p.id === id && p.count < stock) {
+          return { ...p, count: p.count + 1 };
+        }
+        return p;
+      })
     );
+  };
+  
+
+  const decreaseQty = (id) => {
+    setCart(prev =>
+      prev.map(p =>
+        p.id === id && p.count > 1 ? { ...p, count: p.count - 1 } : p
+      )
+    );
+  };
+
+  const totalCountProducts = () => cart.length;
+
+  const getTotalPrice = () => {
+    return cart.reduce((total, item) => {
+      const precio = parseFloat(item.variants[0]?.price) || 0;
+      const cantidad = item.count || 0;
+      return total + precio * cantidad;
+    }, 0);
+  };
+
+  return (
+    <CartContext.Provider
+      value={{
+        cart,
+        addItem,
+        removeItem,
+        totalCountProducts,
+        getTotalPrice,
+        clearCart,
+        decreaseQty,
+        increaseQty,
+      }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
 };

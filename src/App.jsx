@@ -13,6 +13,10 @@ import Login from './Componentes/Login/Login.jsx';
 import { CategoriesProvider } from './Componentes/Contex/CategoriesContext.jsx';
 import DetalleProducto from './Componentes/DetalleProducto/DetalleProducto.jsx';
 import Carrito from './Componentes/Carrito/Carrito.jsx';
+import OrdenControl from './Componentes/OrdenControl/OrdenControl.jsx';
+import Footer from './Componentes/Footer/Foteer.jsx';
+import VentaPOSApp from './Componentes/VentaPOSApp/VentaPOSApp.jsx';
+
 
 function App() {
   return (
@@ -24,16 +28,22 @@ function App() {
             <Route path='/' element={<Home />} />
             <Route path='/login' element={<Login />} />
             <Route path="/carrito" element={<Carrito />} />
+            <Route path='/productos' element={<Productos/>}/>
             {/* Ruta dinámica para categorías y subcategorías */}
             <Route path='/:category' element={<Productos />} />
             <Route path='/:category/:subcategory' element={<Productos />} />
             <Route path="/detalle/:id" element={<DetalleProducto />} />
+            <Route path="/venta" element={<VentaPOSApp />} /> {/* Ruta para el sistema de ventas */}
+
+            <Route path="/orden-control/:draftOrderId" element={<OrdenControl />} />
+
             {/* Ruta de fallback */}
             <Route
               path='*'
               element={<h2 style={{ textAlign: 'center', marginTop: '20px' }}>Página no encontrada</h2>}
             />
           </Routes>
+          <Footer/>
         </Router>
       </CategoriesProvider>
     </CartProvider>

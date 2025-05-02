@@ -107,4 +107,33 @@
   background-color: #fff;
   border-radius: 16px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-style: solid;
+  border-color: black;
 }
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quantity-controls button {
+  padding: 5px 10px;
+  font-size: 18px;
+  cursor: pointer;
+  background-color: rgba(93, 93, 242, 0.603);
+  border-radius: 380px;
+  border-style: solid;
+  border-color: rgb(136, 133, 133);
+}
+
+.stock-warning {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+

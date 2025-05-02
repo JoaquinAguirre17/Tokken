@@ -13,11 +13,15 @@ const Productos = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`https://tokkenbackshopify.onrender.com/api/shopify/products`, {
-          headers: { "Content-Type": "application/json" }
+        // Imprimir la URL antes de realizar la solicitud para verificar que es correcta
+        console.log('Solicitando productos desde:', 'https://tokkenback2.onrender.com/api/shopify/products');
+        
+        const response = await fetch('https://tokkenback2.onrender.com/api/shopify/products', {
+          headers: { "Content-Type": "application/json" },
         });
 
         if (!response.ok) {
+          // Imprimir error si la respuesta no es OK
           throw new Error(`Error en la solicitud: ${response.statusText}`);
         }
 
@@ -51,6 +55,8 @@ const Productos = () => {
         setProducts(filteredProducts);
       } catch (err) {
         console.error("Error al obtener productos:", err);
+        
+        // Mostrar el mensaje de error detallado
         setError(`Error al cargar productos. Detalles: ${err.message}`);
       } finally {
         setLoading(false);

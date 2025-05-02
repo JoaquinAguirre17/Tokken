@@ -1,77 +1,138 @@
-/* Contenedor principal del carrito */
 .carrito-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    margin-top: 50px;
-  }
-  
-  /* Título del carrito */
-  .carrito-container h2 {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  /* Mensaje si el carrito está vacío */
-  .carrito-container p {
-    font-size: 18px;
-    text-align: center;
-    color: #666;
-  }
-  
-  /* Estilos para cada producto en el carrito */
-  .carrito-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #ddd;
-    padding: 10px 0;
-  }
-  
-  .carrito-item h3 {
-    font-size: 18px;
-    color: #333;
-    margin: 0;
-  }
-  
-  .carrito-item p {
-    font-size: 16px;
-    color: #666;
-  }
-  
-  .carrito-item button {
-    background-color: #ff4f5a;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s;
-  }
-  
-  .carrito-item button:hover {
-    background-color: #ff1a1d;
-  }
-  
-  /* Estilos del total */
-  .carrito-total {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 18px;
-    font-weight: bold;
-    margin-top: 20px;
-    color: #333;
-  }
-  
-  .carrito-total p {
-    margin: 0;
-  }
-  
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.2rem;
+  color: #1a1a1a;
+  text-align: center;
+  margin-bottom: 2rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  position: relative;
+}
+
+h2::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: #090df7;
+  margin: 10px auto 0;
+  border-radius: 5px;
+}
+
+
+.carrito-vacio {
+  text-align: center;
+  color: #777;
+}
+
+.btn-clear {
+  background:  #ffcfcf;
+  border: none;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  border-radius: 8px;
+  color: #333;
+  margin: 20px;
+}
+.btn-clear:hover {
+  background-color: #ffaaaa;
+  transform: scale(1.03);
+}
+
+.carrito-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #696969;
+  padding-bottom: 1rem;
+}
+
+.carrito-img {
+  width: 100px;
+  height: auto;
+  object-fit: cover;
+  margin-right: 1rem;
+  border-radius: 8px;
+}
+
+.carrito-details {
+  flex: 1;
+}
+
+.cantidad-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.cantidad-control button {
+  padding: 0.3rem 0.8rem;
+  border: none;
+  background-color: #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.boton-carrito-eliminar {
+  margin-top: 0.5rem;
+  background-color: #ffcfcf;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #900;
+}
+
+.carrito-metodo-pago {
+  margin-top: 2rem;
+}
+
+.carrito-metodo-pago select {
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-top: 0.5rem;
+}
+
+.carrito-total {
+  margin-top: 2rem;
+  font-size: 1.1rem;
+}
+
+.carrito-descuento {
+  color: green;
+  font-weight: bold;
+}
+
+.carrito-total-final {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+.btn-whatsapp {
+  background-color: #25d366;
+  color: white;
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  margin-top: 1rem;
+  cursor: pointer;
+  font-weight: bold;
+}
+.btn-whatsapp:hover{
+  background-color: #77c493;
+  transform: scale(1.03);
+}

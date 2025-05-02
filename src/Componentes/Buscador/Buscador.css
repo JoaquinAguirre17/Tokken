@@ -1,0 +1,119 @@
+/* Estilo base del buscador */
+.buscador-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.buscador-wrapper input {
+    width: 0;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid transparent;
+    border-radius: 25px;
+    outline: none;
+    transition: width 0.3s ease-in-out, padding 0.3s ease-in-out;
+}
+
+.buscador-wrapper input.open {
+    width: 250px;
+    border-color: #ccc;
+    padding-left: 35px;
+}
+
+/* Estilo del icono de búsqueda */
+.buscador-wrapper .search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.buscador-wrapper .search-icon:hover {
+    color: #333;
+}
+
+/* Loader */
+.loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.loader .spinner-border {
+    width: 2rem;
+    height: 2rem;
+    border-width: 3px;
+    border-color: #007bff transparent transparent transparent;
+}
+
+/* Resultados de búsqueda */
+.resultados-lista {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 10px;
+    padding: 0;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    position: absolute;
+    width: 100%;
+    z-index: 10;
+}
+
+.resultado-item {
+    display: flex;
+    padding: 12px;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-bottom: 1px solid #eee;
+}
+
+.resultado-item:last-child {
+    border-bottom: none;
+}
+
+.resultado-item:hover {
+    background-color: #f1f1f1;
+}
+
+.resultado-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-right: 12px;
+}
+
+.resultado-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.resultado-info span {
+    font-size: 14px;
+    color: #333;
+}
+
+.resultado-precio {
+    font-weight: bold;
+    color: #007bff;
+}
+
+/* Responsividad */
+@media (max-width: 576px) {
+    .buscador-wrapper input.open {
+        width: 200px;
+    }
+
+    .resultados-lista {
+        position: absolute;
+        left: 0;
+        right: 0;
+    }
+}

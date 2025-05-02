@@ -1,20 +1,66 @@
+/* BotonComponente.css */
+
+/* Asegura que el <Link> que envuelve el botón no tenga subrayado */
+a > .btn-carrito,
+a:link,
+a:visited,
+a:hover,
+a:active {
+  text-decoration: none;
+}
+
+/* Estilo principal del botón */
 .btn-carrito {
-    background-color: #1e3a54; /* Azul */
-    border: none;
-    color: #81d4fa;
-    padding: 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    border: 2px solid #81d4fa;
-    font-size: 20px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 20px; /* Bordes cuadrados */
-    transition: background-color 0.3s;
+  position: relative;
+  background-color: #e7f0ff;
+  color: #0d6efd;
+  font-weight: 600;
+  padding: 0.5rem 1.2rem;
+  border: 2px solid #0d6efd;
+  border-radius: 30px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-transform: uppercase;
+  cursor: pointer;
 }
 
+/* Hover */
 .btn-carrito:hover {
-    background-color: #005f73; /* Azul más oscuro */
+  background-color: #d4e4ff;
+  color: #003366;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
 }
 
+/* Contador del carrito */
+.contador {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #ff4d4f;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 4px 7px;
+  border-radius: 50%;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  animation: fadeInBounce 0.4s ease-in-out;
+}
+
+/* Animación al aparecer el contador */
+@keyframes fadeInBounce {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}

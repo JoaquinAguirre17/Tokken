@@ -1,0 +1,100 @@
+/* Ingreso de Mercadería */
+.ingreso-mercaderia {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .ingreso-mercaderia h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .ingreso-mercaderia .form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .ingreso-mercaderia label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .ingreso-mercaderia input,
+  .ingreso-mercaderia select {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .ingreso-mercaderia .product-list {
+    margin-top: 30px;
+  }
+  
+  .table th,
+  .table td {
+    text-align: center;
+    vertical-align: middle;
+  }
+  
+  .table th {
+    background-color: #2a9d8f;
+    color: white;
+  }
+  
+  .table tbody tr:nth-child(even) {
+    background-color: #f1f1f1;
+  }
+  
+  .table tbody tr:hover {
+    background-color: #e0e0e0;
+    cursor: pointer;
+  }
+  
+  button.add-product {
+    background-color: #2a9d8f;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button.add-product:hover {
+    background-color: #21867a;
+  }
+  
+  @media (max-width: 768px) {
+    .ingreso-mercaderia h2 {
+      font-size: 1.5rem;
+    }
+  
+    .table {
+      font-size: 0.9rem;
+    }
+  
+    .form-container {
+      gap: 10px;
+    }
+  
+    .ingreso-mercaderia label {
+      font-size: 0.9rem;
+    }
+  
+    .ingreso-mercaderia input,
+    .ingreso-mercaderia select {
+      font-size: 0.9rem;
+    }
+  }
+  

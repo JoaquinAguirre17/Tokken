@@ -1,0 +1,33 @@
+.orden-control-container {
+    text-align: center;
+    padding: 50px;
+    font-family: Arial;
+  }
+  
+  .btn-confirmar {
+    background: #4caf50;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    margin: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .btn-cancelar {
+    background: #f44336;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    margin: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .orden-mensaje {
+    margin-top: 20px;
+    font-weight: bold;
+  }
+  

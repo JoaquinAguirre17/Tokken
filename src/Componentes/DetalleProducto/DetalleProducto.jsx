@@ -10,14 +10,13 @@ const DetalleProducto = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [quantity, setQuantity] = useState(1); // Estado para manejar la cantidad seleccionada
-
+  const [quantity, setQuantity] = useState(1);
   const { addItem } = useCart();
 
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await fetch(`https://tokkenbackshopify.onrender.com/api/shopify/products/${id}`, {
+        const response = await fetch(`https://tokkenback2.onrender.com/api/shopify/products/${id}`, {
           headers: { "Content-Type": "application/json" }
         });
 
@@ -37,17 +36,52 @@ const DetalleProducto = () => {
     fetchProductDetails();
   }, [id]);
 
+  const handleAddToCart = () => {
+    const stock = product.variants[0]?.inventory_quantity || 0;
+    if (!product || !product.id) {
+      console.error("Error: El producto no tiene un ID válido.");
+      return;
+    }
+    if (stock === 0) {
+      alert("Este producto no tiene stock disponible.");
+      return;
+    }
+    if (quantity > stock) {
+      alert(`Solo hay ${stock} unidades disponibles.`);
+      return;
+    }
+    addItem(product, quantity);
+    alert(`Se añadieron ${quantity} unidades de "${product.title}" al carrito.`);
+  };
+
+  const handleQuantityChange = (e) => {
+    const value = parseInt(e.target.value);
+    const stock = product.variants[0]?.inventory_quantity || 1;
+    setQuantity(Math.max(1, Math.min(stock, value || 1)));
+  };
+
+  const handleIncrease = () => {
+    const stock = product.variants[0]?.inventory_quantity || 1;
+    if (quantity < stock) {
+      setQuantity(prev => prev + 1);
+    }
+  };
+
+  const handleDecrease = () => {
+    if (quantity > 1) {
+      setQuantity(prev => prev - 1);
+    }
+  };
+
   if (loading) {
     return (
       <div className="loading-container">
-        <ReactLoading type="spin" color="orange" height={100} width={100} />
+        <ReactLoading type="spin" color="blue" height={100} width={100} />
       </div>
     );
   }
 
-  if (error) {
-    return <p className="error-message">{error}</p>;
-  }
+  if (error) return <p className="error-message">{error}</p>;
 
   if (!product) {
     return (
@@ -57,19 +91,7 @@ const DetalleProducto = () => {
     );
   }
 
-  const handleAddToCart = () => {
-    if (!product || !product.id) {
-      console.error("Error: El producto no tiene un ID válido.");
-      return;
-    }
-    addItem(product, quantity); // Agrega la cantidad seleccionada al carrito
-    alert(`Se añadieron ${quantity} unidades de "${product.title}" al carrito.`);
-  };
-
-  const handleQuantityChange = (e) => {
-    const value = Math.max(1, Math.min(product.variants[0]?.inventory_quantity || 1, parseInt(e.target.value)));
-    setQuantity(value);
-  };
+  const stock = product.variants[0]?.inventory_quantity;
 
   return (
     <div className="detalle-producto-container">
@@ -97,28 +119,35 @@ const DetalleProducto = () => {
               </span>
             )}
             <p className="product-stock">
-              {product.variants[0]?.inventory_quantity !== undefined
-                ? product.variants[0]?.inventory_quantity > 0
-                  ? `Stock disponible: ${product.variants[0].inventory_quantity}`
-                  : "Sin stock"
-                : "Stock no disponible"}
+              {stock > 0 ? `Stock disponible: ${stock}` : "Sin stock"}
             </p>
           </div>
 
-          {/* Selector de cantidad */}
           <div className="quantity-selector">
             <label htmlFor="quantity">Cantidad:</label>
-            <input
-              type="number"
-              id="quantity"
-              value={quantity}
-              min="1"
-              max={product.variants[0]?.inventory_quantity}
-              onChange={handleQuantityChange}
-            />
+            <div className="quantity-controls">
+              <button onClick={handleDecrease}>−</button>
+              <input
+                type="number"
+                id="quantity"
+                value={quantity}
+                min="1"
+                max={stock}
+                onChange={handleQuantityChange}
+              />
+              <button onClick={handleIncrease}>+</button>
+            </div>
+            {quantity === stock && (
+              <p className="stock-warning">Stock máximo alcanzado</p>
+            )}
           </div>
 
-          <BotonComponente nombre="Añadir al carrito" onClick={handleAddToCart} />
+          <BotonComponente
+            nombre="Añadir al carrito"
+            onClick={handleAddToCart}
+            disabled={stock === 0}
+          />
+
         </div>
       </div>
     </div>

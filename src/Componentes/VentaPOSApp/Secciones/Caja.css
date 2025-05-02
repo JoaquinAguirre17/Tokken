@@ -1,0 +1,128 @@
+/* Caja */
+.caja {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .caja h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: 600;
+  }
+  
+  .caja .total {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-top: 20px;
+    color: #2a9d8f;
+  }
+  
+  .table th,
+  .table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 1rem;
+  }
+  
+  .table th {
+    background-color: #2a9d8f;
+    color: white;
+    font-size: 1.1rem;
+  }
+  
+  .table tbody tr:nth-child(even) {
+    background-color: #f1f1f1;
+  }
+  
+  .table tbody tr:hover {
+    background-color: #e0e0e0;
+    cursor: pointer;
+  }
+  
+  button {
+    display: block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button.success {
+    background-color: #2a9d8f;
+    color: white;
+    border: none;
+  }
+  
+  button.success:hover {
+    background-color: #21867a;
+  }
+  
+  button:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+  }
+  
+  @media (max-width: 768px) {
+    .caja h2 {
+      font-size: 1.5rem;
+    }
+  
+    .table {
+      font-size: 0.9rem;
+    }
+  
+    .total {
+      font-size: 1.2rem;
+    }
+  }
+  
+  .caja .btn-danger {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  
+  .caja {
+    padding: 1rem;
+  }
+  
+  /* Estilo para la barra de selección de vendedor */
+  .caja .selector-vendedor {
+    margin-top: 1.5rem;
+    padding: 10px;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .caja .selector-vendedor select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s ease;
+  }
+  
+  .caja .selector-vendedor select:focus {
+    border-color: #2a9d8f;
+  }
+  
+  /* Ajuste en los botones para un estilo más uniforme */
+  button.success, button:disabled {
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+  }
+  
+  

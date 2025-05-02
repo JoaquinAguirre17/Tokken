@@ -8,6 +8,7 @@
 }
 
 /* Título principal */
+/* Título del producto */
 .products-title {
   font-size: 2.5rem;
   text-align: center;
@@ -16,7 +17,10 @@
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 1.5px;
+  position: relative; /* Asegura que el título esté en su propio contexto de apilamiento */
+  z-index: 1; /* Establece una prioridad más baja de apilamiento para que no interrumpa al dropdown */
 }
+
 
 /* Grid de productos */
 .products-grid {

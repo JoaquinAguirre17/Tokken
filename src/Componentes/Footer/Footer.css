@@ -1,0 +1,35 @@
+.footer {
+    background: #0a192f;
+    color: #ffffff;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .footer-logo {
+    width: 80px;
+    height: auto;
+  }
+  
+  .footer-link {
+    color: #81d4fa;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .footer-link:hover {
+    color: #00e6ff;
+  }
+  
+  .footer-social {
+    color: #81d4fa;
+    transition: color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .footer-social:hover {
+    color: #00e6ff;
+    transform: scale(1.2);
+  }
+  
+  hr.border-gray {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  
