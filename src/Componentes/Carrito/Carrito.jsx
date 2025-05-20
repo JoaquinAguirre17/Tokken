@@ -10,7 +10,7 @@ const Carrito = () => {
 
   // Cálculo de totales
   const total = getTotalPrice();
-  const descuento = metodoPago === 'transferencia' ? total * 0.2 : 0;
+  const descuento = metodoPago === 'transferencia' ? total * 0.1 : 0;
   const totalFinal = total - descuento;
 
   // Enviar pedido por WhatsApp
@@ -41,7 +41,7 @@ const Carrito = () => {
       const items = cart.map(p => `• ${p.title} (x${p.count})`).join('\n');
       const medioPago = `\n\n💳 Método de pago: ${metodoPago.toUpperCase()}`;
       const totalTexto = metodoPago === 'transferencia'
-        ? `\n\nSubtotal: $${total.toFixed(2)}\nDescuento 20%: -$${descuento.toFixed(2)}\n💰 Total final: $${totalFinal.toFixed(2)}`
+        ? `\n\nSubtotal: $${total.toFixed(2)}\nDescuento 10%: -$${descuento.toFixed(2)}\n💰 Total final: $${totalFinal.toFixed(2)}`
         : `\n\n💰 Total: $${total.toFixed(2)}`;
       const linkControl = `\n\n🧾 Confirmar venta:\n${data.staff_control_url}`;
       const outro = "\n\nPor favor confirmar si se concretó la venta.";
@@ -101,7 +101,7 @@ const Carrito = () => {
               <option value="none">-- Seleccioná una opción --</option>
               <option value="credito">Crédito en un pago</option>
               <option value="debito">Débito</option>
-              <option value="transferencia">Transferencia bancaria (-20%)</option>
+              <option value="transferencia">Transferencia bancaria (-10%)</option>
             </select>
           </div>
 
@@ -110,7 +110,7 @@ const Carrito = () => {
             {metodoPago === 'transferencia' && (
               <>
                 <p>Subtotal: ${total.toFixed(2)}</p>
-                <p className="carrito-descuento">Descuento 20%: -${descuento.toFixed(2)}</p>
+                <p className="carrito-descuento">Descuento 10%: -${descuento.toFixed(2)}</p>
               </>
             )}
             <p className="carrito-total-final">Total a pagar: ${totalFinal.toFixed(2)}</p>

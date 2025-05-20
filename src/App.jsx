@@ -16,6 +16,7 @@ import Carrito from './Componentes/Carrito/Carrito.jsx';
 import OrdenControl from './Componentes/OrdenControl/OrdenControl.jsx';
 import Footer from './Componentes/Footer/Foteer.jsx';
 import VentaPOSApp from './Componentes/VentaPOSApp/VentaPOSApp.jsx';
+import Caja from './Componentes/VentaPOSApp/Secciones/Caja.jsx';
 
 
 function App() {
@@ -34,7 +35,7 @@ function App() {
             <Route path='/:category/:subcategory' element={<Productos />} />
             <Route path="/detalle/:id" element={<DetalleProducto />} />
             <Route path="/venta" element={<VentaPOSApp />} /> {/* Ruta para el sistema de ventas */}
-
+            <Route path="/caja" element={<Caja />} />
             <Route path="/orden-control/:draftOrderId" element={<OrdenControl />} />
 
             {/* Ruta de fallback */}
