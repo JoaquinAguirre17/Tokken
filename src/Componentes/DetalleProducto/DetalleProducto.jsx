@@ -37,11 +37,14 @@ const DetalleProducto = () => {
   }, [id]);
 
   const handleAddToCart = () => {
-    const stock = product.variants[0]?.inventory_quantity || 0;
     if (!product || !product.id) {
       console.error("Error: El producto no tiene un ID válido.");
       return;
     }
+
+    const variant = product?.variants?.[0];
+    const stock = variant?.inventory_quantity || 0;
+
     if (stock === 0) {
       alert("Este producto no tiene stock disponible.");
       return;
@@ -50,18 +53,29 @@ const DetalleProducto = () => {
       alert(`Solo hay ${stock} unidades disponibles.`);
       return;
     }
-    addItem(product, quantity);
+
+    const productoParaCarrito = {
+      ...product,
+      variants: variant ? [{ id: variant.id, price: variant.price }] : []
+    };
+
+    addItem(productoParaCarrito, quantity);
     alert(`Se añadieron ${quantity} unidades de "${product.title}" al carrito.`);
   };
 
   const handleQuantityChange = (e) => {
-    const value = parseInt(e.target.value);
-    const stock = product.variants[0]?.inventory_quantity || 1;
-    setQuantity(Math.max(1, Math.min(stock, value || 1)));
+    const value = Number(e.target.value);
+    const variant = product?.variants?.[0];
+    const stock = variant?.inventory_quantity || 1;
+
+    if (!isNaN(value)) {
+      setQuantity(Math.max(1, Math.min(stock, value)));
+    }
   };
 
   const handleIncrease = () => {
-    const stock = product.variants[0]?.inventory_quantity || 1;
+    const variant = product?.variants?.[0];
+    const stock = variant?.inventory_quantity || 1;
     if (quantity < stock) {
       setQuantity(prev => prev + 1);
     }
@@ -91,17 +105,20 @@ const DetalleProducto = () => {
     );
   }
 
-  const stock = product.variants[0]?.inventory_quantity;
+  const variant = product?.variants?.[0];
+  const stock = variant?.inventory_quantity || 0;
+  const price = variant?.price || 0;
+  const compareAtPrice = variant?.compare_at_price;
 
   return (
     <div className="detalle-producto-container">
-      <h2 className="detalle-producto-title">{product.title}</h2>
+      <h2 className="detalle-producto-title">{product.title || 'Producto sin título'}</h2>
 
       <div className="detalle-producto-content">
         <div className="detalle-producto-image">
           <img
             src={product.images?.length > 0 ? product.images[0].src : ''}
-            alt={product.title}
+            alt={product.title || 'Imagen del producto'}
             className="detalle-producto-img"
           />
         </div>
@@ -112,10 +129,10 @@ const DetalleProducto = () => {
           </p>
 
           <div className="detalle-producto-price">
-            <span className="price">${product.variants[0]?.price}</span>
-            {product.variants[0]?.compare_at_price && (
+            <span className="price">${price}</span>
+            {compareAtPrice && (
               <span className="old-price">
-                <del>${product.variants[0]?.compare_at_price}</del>
+                <del>${compareAtPrice}</del>
               </span>
             )}
             <p className="product-stock">
@@ -126,7 +143,7 @@ const DetalleProducto = () => {
           <div className="quantity-selector">
             <label htmlFor="quantity">Cantidad:</label>
             <div className="quantity-controls">
-              <button onClick={handleDecrease}>−</button>
+              <button onClick={handleDecrease} aria-label="Disminuir cantidad">−</button>
               <input
                 type="number"
                 id="quantity"
@@ -135,7 +152,7 @@ const DetalleProducto = () => {
                 max={stock}
                 onChange={handleQuantityChange}
               />
-              <button onClick={handleIncrease}>+</button>
+              <button onClick={handleIncrease} aria-label="Aumentar cantidad">+</button>
             </div>
             {quantity === stock && (
               <p className="stock-warning">Stock máximo alcanzado</p>

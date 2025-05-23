@@ -1,33 +1,53 @@
 .orden-control-container {
-    text-align: center;
-    padding: 50px;
-    font-family: Arial;
-  }
-  
-  .btn-confirmar {
-    background: #4caf50;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    margin: 10px;
-    font-size: 16px;
-    border-radius: 8px;
-    cursor: pointer;
-  }
-  
-  .btn-cancelar {
-    background: #f44336;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    margin: 10px;
-    font-size: 16px;
-    border-radius: 8px;
-    cursor: pointer;
-  }
-  
-  .orden-mensaje {
-    margin-top: 20px;
-    font-weight: bold;
-  }
-  
+  max-width: 320px;
+  margin: 20px auto;
+  padding: 20px 25px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.05);
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.orden-control-container h2 {
+  font-weight: 600;
+  font-size: 1.3rem;
+  margin-bottom: 18px;
+}
+
+.orden-control-container button {
+  cursor: pointer;
+  background: #007bff;
+  border: none;
+  color: white;
+  padding: 10px 18px;
+  margin: 6px 10px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+  user-select: none;
+  min-width: 120px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.orden-control-container button:hover {
+  background: #0056b3;
+  box-shadow: 0 3px 10px rgb(0 86 179 / 0.3);
+}
+
+.orden-control-container button:active {
+  background: #00408d;
+  box-shadow: none;
+}
+
+.orden-control-container p {
+  margin-top: 18px;
+  font-size: 1rem;
+  color: #2d8659;
+  font-weight: 600;
+}

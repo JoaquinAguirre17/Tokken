@@ -21,17 +21,20 @@ const Venta = () => {
   const [metodoPago, setMetodoPago] = useState('efectivo');
   const [vendedorSeleccionado, setVendedorSeleccionado] = useState('');
   const [enviando, setEnviando] = useState(false);
-  const vendedores = ['Adrea', 'Joaquin', 'Facundo', 'Gonzalo', 'Alicia'];
+
+  const [mensajeError, setMensajeError] = useState(null);
   const inputRef = useRef(null);
+
+  const vendedores = ['Adrea', 'Joaquin', 'Facundo', 'Gonzalo', 'Alicia'];
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
-  // Obtener productos desde la API de Shopify
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
+      setError(null);
       try {
         const response = await fetch('https://tokkenback2.onrender.com/api/shopify/products', {
           headers: { "Content-Type": "application/json" },
@@ -48,26 +51,30 @@ const Venta = () => {
     fetchProducts();
   }, []);
 
-  // Filtrar productos por categoría y búsqueda
   const resultados = productos.filter(p =>
     (categoria === '' || (p.product_type && p.product_type.toLowerCase() === categoria)) &&
     p.title.toLowerCase().includes(busqueda.toLowerCase())
   );
 
-  // Agregar producto al carrito
-  const agregarProducto = (producto) => {
+  const puedeAgregar = (producto) => {
     const variante = producto.variants[0];
-    if (!variante || variante.inventory_quantity <= 0) {
-      alert('Sin stock disponible');
+    if (!variante || variante.inventory_quantity <= 0) return false;
+
+    const itemEnCarrito = carrito.find(p => p.id === producto.id);
+    if (!itemEnCarrito) return true;
+    return itemEnCarrito.cantidad < variante.inventory_quantity;
+  };
+
+  const agregarProducto = (producto) => {
+    if (!puedeAgregar(producto)) {
+      setMensajeError('No hay suficiente stock disponible para este producto.');
       return;
     }
+    setMensajeError(null);
+    const variante = producto.variants[0];
     setCarrito(prev => {
       const existe = prev.find(p => p.id === producto.id);
       if (existe) {
-        if (existe.cantidad + 1 > variante.inventory_quantity) {
-          alert('No hay suficiente stock');
-          return prev;
-        }
         return prev.map(p =>
           p.id === producto.id ? { ...p, cantidad: p.cantidad + 1 } : p
         );
@@ -80,51 +87,41 @@ const Venta = () => {
           precio: parseFloat(variante.price),
           cantidad: 1,
           stock: variante.inventory_quantity,
-          variants: producto.variants // importante para el backend
+          variant_id: variante.id,
+          imagen: producto.images?.[0]?.src || null,
         },
       ];
     });
   };
 
-  // Actualizar cantidad en el carrito
   const actualizarCantidad = (id, cantidad) => {
-    const cantidadValida = parseInt(cantidad, 10);
-    if (!isNaN(cantidadValida) && cantidadValida >= 1) {
-      setCarrito(prev =>
-        prev.map(p =>
-          p.id === id
-            ? {
-                ...p,
-                cantidad:
-                  cantidadValida > p.stock ? p.stock : cantidadValida,
-              }
-            : p
-        )
-      );
-    }
+    const cantNum = parseInt(cantidad, 10);
+    if (isNaN(cantNum) || cantNum < 1) return;
+    setCarrito(prev =>
+      prev.map(p =>
+        p.id === id
+          ? { ...p, cantidad: cantNum > p.stock ? p.stock : cantNum }
+          : p
+      )
+    );
   };
 
-  // Actualizar precio en el carrito
   const actualizarPrecio = (id, precio) => {
-    const precioValido = parseFloat(precio);
-    if (!isNaN(precioValido) && precioValido >= 0) {
-      setCarrito(prev =>
-        prev.map(p => (p.id === id ? { ...p, precio: precioValido } : p))
-      );
-    }
+    const precioNum = parseFloat(precio);
+    if (isNaN(precioNum) || precioNum < 0) return;
+    setCarrito(prev =>
+      prev.map(p => (p.id === id ? { ...p, precio: precioNum } : p))
+    );
   };
 
-  // Eliminar producto del carrito
   const eliminarProducto = (id) => {
     setCarrito(prev => prev.filter(p => p.id !== id));
   };
 
-  // Calcular total
   const calcularTotal = () => {
     return carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
   };
 
-  // Actualizar stock localmente
   const actualizarStock = () => {
     setProductos(prev =>
       prev.map(prod => {
@@ -147,41 +144,54 @@ const Venta = () => {
     );
   };
 
-  // Guardar la venta en localStorage
   const guardarVenta = (venta) => {
     const ventasPrevias = JSON.parse(localStorage.getItem('ventasPOS')) || [];
     ventasPrevias.push(venta);
     localStorage.setItem('ventasPOS', JSON.stringify(ventasPrevias));
   };
 
-  // Enviar venta al backend (ruta POS)
   const enviarVentaAlBackend = async (venta) => {
-    const response = await fetch('https://tokkenback2.onrender.com/api/shopify/ventas-pos', {
+    const response = await fetch('https://tokkenback2.onrender.com/api/shopify/createOrder', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(venta),
     });
-    if (!response.ok) throw new Error('Error al registrar la venta en el servidor');
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Error al registrar la venta:', response.status, response.statusText, errorText);
+      throw new Error(`Error al registrar la venta: ${response.statusText}`);
+    }
     return await response.json();
   };
 
-  // Confirmar venta
   const confirmarVenta = async () => {
     if (!vendedorSeleccionado) {
-      alert('Por favor seleccioná un vendedor antes de confirmar la venta.');
+      setMensajeError('Seleccioná un vendedor antes de confirmar la venta.');
       return;
     }
     if (carrito.length === 0) {
-      alert('Agrega al menos un producto.');
+      setMensajeError('Agregá al menos un producto al carrito.');
       return;
     }
+    setMensajeError(null);
+
+    const productosParaEnvio = carrito.map(p => ({
+      variant_id: p.variant_id,
+      quantity: p.cantidad,
+      price: p.precio,
+      title: p.title,
+      id: p.id,
+    }));
+
     const venta = {
       fecha: new Date().toISOString(),
-      productos: carrito,
+      productos: productosParaEnvio,
       metodoPago,
       total: calcularTotal(),
       vendedor: vendedorSeleccionado,
+      tags: ['local'],
     };
+
     setEnviando(true);
     try {
       await enviarVentaAlBackend(venta);
@@ -191,126 +201,188 @@ const Venta = () => {
       setCarrito([]);
       setVendedorSeleccionado('');
       setMetodoPago('efectivo');
+      setBusqueda('');
+      setCategoria('');
+      inputRef.current?.focus();
     } catch (error) {
-      alert('Error al registrar la venta en el servidor');
+      setMensajeError('Error al registrar la venta en el servidor.');
     } finally {
       setEnviando(false);
     }
   };
 
-  return (
-    <div className="venta-section">
-      <div className="columna-busqueda">
-        <h3>Buscar producto</h3>
-        <select
-          value={categoria}
-          onChange={e => setCategoria(e.target.value)}
-          style={{ marginBottom: 8 }}
-        >
-          {CATEGORIAS.map(cat => (
-            <option key={cat.value} value={cat.value}>{cat.label}</option>
-          ))}
-        </select>
-        <input
-          ref={inputRef}
-          type="text"
-          value={busqueda}
-          onChange={e => setBusqueda(e.target.value)}
-          placeholder="Buscar por nombre..."
-        />
-        {loading && <p>Cargando productos...</p>}
-        {error && <p className="error-message">{error}</p>}
-        <table className="tabla-productos">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Precio</th>
-              <th>Stock</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {!loading && !error && resultados.slice(0, 30).map(p => (
-              <tr key={p.id}>
-                <td>{p.title}</td>
-                <td>${p.variants[0]?.price}</td>
-                <td>{p.variants[0]?.inventory_quantity ?? '-'}</td>
-                <td>
-                  <button onClick={() => agregarProducto(p)}>Agregar</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {resultados.length > 30 && <p>Mostrando los primeros 30 resultados...</p>}
-      </div>
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && resultados.length > 0) {
+      e.preventDefault();
+      agregarProducto(resultados[0]);
+    }
+  };
 
-      <div className="columna-venta">
-        <h3>Carrito</h3>
+  return (
+    <div className="venta-pos-app">
+      <h2 className="venta-pos-titulo">Sistema de Venta</h2>
+
+      <div className="venta-pos-selector-vendedor">
         <SelectorVendedor
           vendedores={vendedores}
           vendedorSeleccionado={vendedorSeleccionado}
           setVendedorSeleccionado={setVendedorSeleccionado}
         />
+      </div>
 
-        {carrito.length === 0 && (
-          <div className="carrito-vacio">
-            <span>🛒</span>
-            <p>No hay productos agregados.</p>
-          </div>
-        )}
+      <div className="venta-pos-main">
+        <div className="venta-pos-filtros">
+          <input
+            ref={inputRef}
+            type="text"
+            placeholder="Buscar producto..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="venta-pos-input-busqueda"
+            aria-label="Buscar producto"
+          />
 
-        <div className="carrito-lista">
-          {carrito.map(p => (
-            <div key={p.id} className="item-producto tarjeta-carrito">
-              <div className="producto-header">
-                <div className="producto-nombre">{p.title}</div>
-                <button className="btnn-eliminar" onClick={() => eliminarProducto(p.id)}>🗑️</button>
-              </div>
-              <div className="producto-detalles">
-                <label>
-                  <span>Cantidad:</span>
-                  <input
-                    type="number"
-                    min="1"
-                    max={p.stock}
-                    value={p.cantidad}
-                    onChange={e => actualizarCantidad(p.id, e.target.value)}
-                  />
-                </label>
-                <label>
-                  <span>Precio:</span>
-                  <input
-                    type="number"
-                    min="0"
-                    value={p.precio}
-                    onChange={e => actualizarPrecio(p.id, e.target.value)}
-                  />
-                </label>
-                <div className="producto-total">
-                  Subtotal: <b>${(p.precio * p.cantidad).toFixed(2)}</b>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="metodo-pago">
-          <h4>Método de pago</h4>
-          <select value={metodoPago} onChange={e => setMetodoPago(e.target.value)}>
-            <option value="efectivo">Efectivo</option>
-            <option value="tarjeta">Tarjeta</option>
-            <option value="transferencia">QR / Transferencia</option>
+          <select
+            value={categoria}
+            onChange={(e) => setCategoria(e.target.value)}
+            className="venta-pos-select-categoria"
+            aria-label="Filtrar por categoría"
+          >
+            {CATEGORIAS.map(c => (
+              <option key={c.value} value={c.value}>{c.label}</option>
+            ))}
           </select>
         </div>
 
-        <div className="total">
-          <h4>Total: ${calcularTotal()}</h4>
-        </div>
+        <div className="venta-pos-contenido">
+          <div className="venta-pos-productos">
+            {error && <p className="venta-pos-mensaje-error">{error}</p>}
+            {mensajeError && <p className="venta-pos-mensaje-error">{mensajeError}</p>}
 
-        <button className="btn-confirmar" onClick={confirmarVenta} disabled={enviando}>
-          {enviando ? 'Enviando...' : 'Confirmar venta'}
-        </button>
+            {loading ? (
+              <p>Cargando productos...</p>
+            ) : (
+              <div className="venta-pos-resultados">
+                {resultados.length === 0 ? (
+                  <p>No se encontraron productos.</p>
+                ) : (
+                  resultados.map(producto => {
+                    const variante = producto.variants[0];
+                    const stock = variante?.inventory_quantity || 0;
+                    const puedeAgregarProd = puedeAgregar(producto);
+                    return (
+                      <div key={producto.id} className="venta-pos-producto-card">
+                        {producto.images?.[0]?.src && (
+                          <img
+                            src={producto.images[0].src}
+                            alt={producto.title}
+                            className="venta-pos-producto-imagen"
+                            loading="lazy"
+                          />
+                        )}
+                        <div className="venta-pos-producto-info">
+                          <h3 className="venta-pos-producto-titulo">{producto.title}</h3>
+                          <p className="venta-pos-producto-precio">
+                            Precio: ${variante?.price ? Number(variante.price).toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '0.00'}
+                          </p>
+                          <p className="venta-pos-producto-stock">Stock: {stock}</p>
+                          <button
+                            disabled={!puedeAgregarProd}
+                            onClick={() => agregarProducto(producto)}
+                            className={`venta-pos-btn-agregar ${!puedeAgregarProd ? 'disabled' : ''}`}
+                            aria-label={`Agregar ${producto.title} al carrito`}
+                          >
+                            Agregar
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="venta-pos-carrito">
+            <h3 className="venta-pos-carrito-titulo">Carrito</h3>
+            {carrito.length === 0 ? (
+              <p>No hay productos en el carrito.</p>
+            ) : (
+              <div className="venta-pos-carrito-lista">
+                {carrito.map(({ id, title, precio, cantidad, stock, imagen }) => (
+                  <div key={id} className="venta-pos-carrito-item">
+                    {imagen && (
+                      <img src={imagen} alt={title} className="venta-pos-carrito-imagen" loading="lazy" />
+                    )}
+                    <div className="venta-pos-carrito-detalles">
+                      <p className="venta-pos-carrito-titulo">{title}</p>
+                      <label>
+                        Cantidad:
+                        <input
+                          type="number"
+                          min="1"
+                          max={stock}
+                          value={cantidad}
+                          onChange={e => actualizarCantidad(id, e.target.value)}
+                          className="venta-pos-input-cantidad"
+                          aria-label={`Cantidad de ${title}`}
+                        />
+                      </label>
+                      <label>
+                        Precio:
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={precio}
+                          onChange={e => actualizarPrecio(id, e.target.value)}
+                          className="venta-pos-input-precio"
+                          aria-label={`Precio de ${title}`}
+                        />
+                      </label>
+                      <button
+                        onClick={() => eliminarProducto(id)}
+                        className="venta-pos-btn-eliminar"
+                        aria-label={`Eliminar ${title} del carrito`}
+                      >
+                         🗑️
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="venta-pos-resumen-venta">
+              <p>Total: <b>${calcularTotal().toFixed(2)}</b></p>
+
+              <label>
+                Método de Pago:
+                <select
+                  value={metodoPago}
+                  onChange={e => setMetodoPago(e.target.value)}
+                  className="venta-pos-select-metodo"
+                  aria-label="Seleccionar método de pago"
+                >
+                  <option value="efectivo">Efectivo</option>
+                  <option value="mercadopago">Mercado Pago</option>
+                  <option value="debito">Débito</option>
+                  <option value="credito">Crédito</option>
+                </select>
+              </label>
+
+              <button
+                onClick={confirmarVenta}
+                disabled={enviando}
+                className="venta-pos-btn-confirmar"
+                aria-label="Confirmar venta"
+              >
+                {enviando ? 'Procesando...' : 'Confirmar Venta'}
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
