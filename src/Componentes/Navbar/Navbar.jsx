@@ -1,13 +1,30 @@
-import { useState, useEffect } from 'react'; 
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Navbar, Container, Nav, Offcanvas, Dropdown,
   InputGroup, Form, Button, Spinner, ButtonGroup
 } from 'react-bootstrap';
-import { FaShoppingCart, FaUser, FaHome } from 'react-icons/fa';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import CardWidgetComponente from '../CardWidget/CardWidgetComponente';
+
+const API_SEARCH = 'https://tokkenback2.onrender.com/api/products/search';
+
+function normalizeProduct(p) {
+  const id = p._id ?? p.id ?? p.handle ?? '';
+  const title = p.title ?? '';
+
+  let image = '';
+  if (Array.isArray(p.images) && p.images.length) {
+    const first = p.images[0];
+    image = typeof first === 'string' ? first : (first.url ?? first.src ?? '');
+  } else if (p.image?.src) {
+    image = p.image.src;
+  }
+
+  const price = p?.pricing?.sale ?? p?.pricing?.list ?? (p?.variants?.[0]?.price ? Number(p.variants[0].price) : undefined);
+  return { id, title, image, price };
+}
 
 function NavbarOffcanvas() {
   const [show, setShow] = useState(false);
@@ -17,6 +34,7 @@ function NavbarOffcanvas() {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const abortRef = useRef(null);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -33,30 +51,47 @@ function NavbarOffcanvas() {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (query.length < 2) {
-        setResultados([]);
-        return;
-      }
+    if (query.trim().length < 2) {
+      setResultados([]);
+      return;
+    }
 
-      setLoading(true);
-      setError('');
+    // cancelación de petición previa
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    setLoading(true);
+    setError('');
+
+    const t = setTimeout(async () => {
       try {
-        const res = await fetch('https://tokkenback2.onrender.com/api/shopify/products');
+        const url = `${API_SEARCH}?query=${encodeURIComponent(query.trim())}`;
+        const res = await fetch(url, { signal: controller.signal });
+        if (!res.ok) {
+          const txt = await res.text().catch(() => '');
+          throw new Error(`HTTP ${res.status} ${res.statusText} – ${txt.slice(0,120)}`);
+        }
         const data = await res.json();
-        const filtrados = data.products.filter(p =>
-          p.title.toLowerCase().includes(query.toLowerCase())
-        );
-        setResultados(filtrados.slice(0, 5));
+        const raw = Array.isArray(data)
+          ? data
+          : (Array.isArray(data.products) ? data.products : (Array.isArray(data.items) ? data.items : []));
+        setResultados(raw.map(normalizeProduct).slice(0, 5));
       } catch (err) {
-        setError('Hubo un problema al obtener los productos. Intenta de nuevo.');
+        if (err.name !== 'AbortError') {
+          console.error('Error al buscar:', err);
+          setError('Hubo un problema al obtener los productos. Intenta de nuevo.');
+          setResultados([]);
+        }
       } finally {
         setLoading(false);
       }
-    };
+    }, 300); // debounce
 
-    const timeout = setTimeout(fetchData, 300);
-    return () => clearTimeout(timeout);
+    return () => {
+      clearTimeout(t);
+      if (abortRef.current) abortRef.current.abort();
+    };
   }, [query]);
 
   return (
@@ -87,22 +122,22 @@ function NavbarOffcanvas() {
             <Nav className="nav-contenido">
               <div className="categoriass">
                 <DropdownMenu title="Telefonia" categories={[
-                  'Auriculares', 'Cargadores', 'Cables', 'Auriculares Inalambricos',
-                  'Accesorios para dispositivos', 'Adaptadores', 'Receptores Bluetooth'
+                  'Auriculares','Cargadores','Cables','Auriculares Inalambricos',
+                  'Accesorios para dispositivos','Adaptadores','Receptores Bluetooth'
                 ]} onClick={handleLinkClick} />
                 <DropdownMenu title="Gamer" categories={[
-                  'Cables', 'Auriculares', 'Accesorios para juegos',
-                  'Joysticks para celular', 'Perifericos'
+                  'Cables','Auriculares','Accesorios para juegos',
+                  'Joysticks para celular','Perifericos'
                 ]} onClick={handleLinkClick} />
-                <DropdownMenu  title="Electronica" categories={[
-                  'Cables', 'Relojes', 'Computacion', 'Oficina',
-                  'Iluminacion y accesorios', 'Parlantes',
-                  'Microfonos', 'Decoracion', 'Figuras coleccionables',
-                  'Almacenamiento', 'Camaras de seguridad'
+                <DropdownMenu title="Electronica" categories={[
+                  'Cables','Relojes','Computacion','Oficina',
+                  'Iluminacion y accesorios','Parlantes',
+                  'Microfonos','Decoracion','Figuras coleccionables',
+                  'Almacenamiento','Camaras de seguridad'
                 ]} onClick={handleLinkClick} />
                 <DropdownMenu title="Accesorios" categories={[
-                  'Llavero', 'Juguetes Popit', 'Soportes', 'Selfie sticks',
-                  'Pilas', 'Repuestos para wearables', 'Organizadores',
+                  'Llavero','Juguetes Popit','Soportes','Selfie sticks',
+                  'Pilas','Repuestos para wearables','Organizadores',
                   'Mates y botellas'
                 ]} onClick={handleLinkClick} />
               </div>
@@ -125,11 +160,15 @@ function NavbarOffcanvas() {
                     {open && query.length >= 2 && resultados.length > 0 && (
                       <div className="resultados-lista-navbar">
                         {resultados.map((p) => (
-                          <div key={p.id} className="resultado-item-navbar" onClick={() => handleResultClick(p.id)}>
-                            <img src={p.images[0]?.src} alt={p.title} className="resultado-img-navbar" />
+                          <div
+                            key={p.id}
+                            className="resultado-item-navbar"
+                            onMouseDown={(e) => { e.preventDefault(); handleResultClick(p.id); }}
+                          >
+                            <img src={p.image || ''} alt={p.title} className="resultado-img-navbar" />
                             <div className="resultado-info-navbar">
                               <span>{p.title}</span>
-                              <span className="resultado-precio-navbar">${p.variants[0]?.price}</span>
+                              <span className="resultado-precio-navbar">{p.price != null ? `$${p.price}` : '—'}</span>
                             </div>
                           </div>
                         ))}
@@ -141,6 +180,7 @@ function NavbarOffcanvas() {
                       <span className="visually-hidden">Cargando...</span>
                     </Spinner>
                   )}
+                  {error && <div className="text-danger small mt-1">{error}</div>}
                 </div>
 
                 <div className="carrito">
@@ -155,7 +195,6 @@ function NavbarOffcanvas() {
   );
 }
 
-// 🔧 Esta parte es la única que cambiamos:
 function DropdownMenu({ title, categories, onClick }) {
   return (
     <div className="boton-categorias">

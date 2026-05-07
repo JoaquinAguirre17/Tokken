@@ -4,72 +4,100 @@ import ReactLoading from 'react-loading';
 import './Productos.css';
 import BotonComponente from '../Boton/BotonComponente';
 
+const API_URL = 'https://tokkenback2.onrender.com/api/products';
+
+// 👉 Normaliza un producto (Shopify o Mongo) a un formato común para pintar la UI
+function normalizeProduct(p) {
+  const id = p._id ?? p.id ?? p.handle ?? '';
+  const title = p.title ?? '';
+
+  // Imagen (Shopify: images[].src o image.src) (Mongo: images[].url o string)
+  let image = '';
+  if (Array.isArray(p.images) && p.images.length) {
+    const first = p.images[0];
+    image = typeof first === 'string' ? first : (first.src ?? first.url ?? '');
+  } else if (p.image?.src) {
+    image = p.image.src;
+  }
+
+  // Precio (Mongo: pricing.sale || pricing.list; Shopify: variants[0].price)
+  const price =
+    p.pricing?.sale ??
+    p.pricing?.list ??
+    (p.variants?.[0]?.price ? Number(p.variants[0].price) : undefined);
+
+  // Stock (Mongo: variants[0].stock || inventory[0].qty; Shopify: variants[0].inventory_quantity)
+  const stock =
+    p.variants?.[0]?.stock ??
+    p.inventory?.[0]?.qty ??
+    p.variants?.[0]?.inventory_quantity;
+
+  // Categoría / tags (para filtros)
+  const category = (p.category ?? p.product_type ?? '').toString();
+  const tags = Array.isArray(p.tags)
+    ? p.tags.map(t => String(t))
+    : typeof p.tags === 'string'
+      ? p.tags.split(',').map(t => t.trim())
+      : [];
+
+  return { id, title, image, price, stock, category, tags };
+}
+
 const Productos = () => {
-  const { category, subcategory } = useParams(); // Obtenemos los parámetros de la URL
+  const { category, subcategory } = useParams();
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState(null);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        // Imprimir la URL antes de realizar la solicitud para verificar que es correcta
-        console.log('Solicitando productos desde:', 'https://tokkenback2.onrender.com/api/shopify/products');
-        
-        const response = await fetch('https://tokkenback2.onrender.com/api/shopify/products', {
-          headers: { "Content-Type": "application/json" },
-        });
+    let abort = false;
 
-        if (!response.ok) {
-          // Imprimir error si la respuesta no es OK
-          throw new Error(`Error en la solicitud: ${response.statusText}`);
+    const fetchProducts = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch(API_URL); // GET sin headers para evitar preflight
+        if (!res.ok) {
+          const text = await res.text().catch(() => '');
+          throw new Error(`HTTP ${res.status} ${res.statusText} – ${text.slice(0,120)}`);
         }
 
-        const data = await response.json();
-        console.log("Productos obtenidos:", data);
+        const data = await res.json();
+        console.log('Productos obtenidos:', data);
 
-        let filteredProducts = data.products;
+        // Aceptar array directo o { products: [...] }
+        const raw = Array.isArray(data) ? data : (Array.isArray(data.products) ? data.products : []);
+        let normalized = raw.map(normalizeProduct);
 
-        // Filtrar por categoría si existe (ignorando mayúsculas)
+        // Filtro por categoría (case-insensitive)
         if (category) {
-          filteredProducts = filteredProducts.filter(
-            p => p.product_type?.toLowerCase() === category.toLowerCase()
+          normalized = normalized.filter(p => p.category.toLowerCase() === category.toLowerCase());
+        }
+
+        // Filtro por subcategoría como tag (case-insensitive)
+        if (subcategory) {
+          normalized = normalized.filter(p =>
+            p.tags.map(t => t.toLowerCase()).includes(subcategory.toLowerCase())
           );
         }
 
-        // Filtrar por subcategoría (tag) si existe (ignorando mayúsculas)
-        if (subcategory) {
-          filteredProducts = filteredProducts.filter(p => {
-            let productTags = [];
-
-            if (typeof p.tags === "string") {
-              productTags = p.tags.split(",").map(tag => tag.trim().toLowerCase());
-            } else if (Array.isArray(p.tags)) {
-              productTags = p.tags.map(tag => tag.toLowerCase());
-            }
-
-            return productTags.includes(subcategory.toLowerCase());
-          });
-        }
-
-        setProducts(filteredProducts);
+        if (!abort) setProducts(normalized);
       } catch (err) {
-        console.error("Error al obtener productos:", err);
-        
-        // Mostrar el mensaje de error detallado
-        setError(`Error al cargar productos. Detalles: ${err.message}`);
+        console.error('Error al obtener productos:', err);
+        if (!abort) setError(`Error al cargar productos. Detalles: ${err.message}`);
       } finally {
-        setLoading(false);
+        if (!abort) setLoading(false);
       }
     };
 
     fetchProducts();
+    return () => { abort = true; };
   }, [category, subcategory]);
 
   if (loading) {
     return (
       <div className="loading-container">
-        <ReactLoading type="spin" color="blue" height={100} width={100} />
+        <ReactLoading type="spin" />
       </div>
     );
   }
@@ -86,25 +114,28 @@ const Productos = () => {
         </div>
       ) : (
         <div className="products-grid">
-          {products.map((product) => (
-            <div className="product-card" key={product.id}>
+          {products.map((p) => (
+            <div className="product-card" key={p.id}>
               <img
                 className="product-image"
-                src={product.images?.length > 0 ? product.images[0].src : ''}
-                alt={product.title}
+                src={p.image || ''}
+                alt={p.title}
+                loading="lazy"
               />
               <div className="product-details">
-                <h5 className="product-name">{product.title}</h5>
-                <p className="product-price">Precio: ${product.variants[0]?.price}</p>
+                <h5 className="product-name">{p.title}</h5>
+                <p className="product-price">
+                  Precio: {p.price !== undefined ? `$${p.price}` : '—'}
+                </p>
                 <p className="product-stock">
-                  {product.variants[0]?.inventory_quantity !== undefined
-                    ? product.variants[0]?.inventory_quantity > 0
-                      ? `Stock disponible: ${product.variants[0].inventory_quantity}`
-                      : "Sin stock"
-                    : "Stock no disponible"}
+                  {typeof p.stock === 'number'
+                    ? p.stock > 0
+                      ? `Stock disponible: ${p.stock}`
+                      : 'Sin stock'
+                    : 'Stock no disponible'}
                 </p>
               </div>
-              <BotonComponente nombre={'Ver Detalle'} ruta={`/detalle/${product.id}`} />
+              <BotonComponente nombre="Ver Detalle" ruta={`/detalle/${p.id}`} />
             </div>
           ))}
         </div>

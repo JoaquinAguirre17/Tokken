@@ -157,7 +157,7 @@
 .split-btn-group {
   display: flex;
   align-items: center;
-  margin-left: 20px;
+  margin-left:10px;
   position: relative;
   z-index: 1000;
 }

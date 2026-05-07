@@ -1,0 +1,169 @@
+/* ====== CrearProductos (scoped con .cp) ====== */
+.cp{
+  --bg:#fff; --fg:#0f172a; --muted:#64748b; --line:#e2e8f0;
+  --panel:#fff; --input:#fff; --primary:#111827; --focus:#2563eb;
+  --ok:#16a34a; --err:#dc2626; --radius:12px; --shadow:0 6px 20px rgba(2,6,23,.06);
+}
+
+@media (prefers-color-scheme: dark){
+  .cp{
+    --bg:#0b1020; --fg:#e5e7eb; --muted:#94a3b8; --line:#1f2a37;
+    --panel:#0c1326; --input:#0f172a; --primary:#e5e7eb; --shadow:0 10px 28px rgba(0,0,0,.35);
+  }
+}
+
+.cp .cp-form{
+  max-width: 900px;
+  margin: 24px auto 56px;
+  padding: clamp(18px,3vw,28px);
+  color: var(--fg);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.cp .cp-title{
+  margin: 0 0 10px;
+  font-size: clamp(20px,2.6vw,26px);
+  letter-spacing: .2px;
+}
+
+.cp .cp-subtitle{
+  margin: 22px 0 10px;
+  font-size: 13px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+/* ===== Grid ===== */
+.cp .cp-grid{ display: grid; gap: 12px; }
+.cp .cp-cols-2{ grid-template-columns: 1fr; }
+.cp .cp-cols-3{ grid-template-columns: 1fr; }
+
+@media (min-width: 720px){
+  .cp .cp-cols-2{ grid-template-columns: 1fr 1fr; }
+  .cp .cp-cols-3{ grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Modificadores que usás dentro de repeat-item */
+.cp .cp-grid-2{ grid-template-columns: 1fr; }
+.cp .cp-grid-3{ grid-template-columns: 1fr; }
+
+@media (min-width: 720px){
+  .cp .cp-grid-2{ grid-template-columns: 1fr 1fr; }
+  .cp .cp-grid-3{ grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ===== Campos ===== */
+.cp .cp-field{ display: grid; gap: 6px; }
+.cp .cp-label{ font-size: 13px; color: var(--muted); }
+
+.cp .cp-input,
+.cp .cp-select,
+.cp .cp-textarea{
+  width: 100%;
+  border: 1px solid var(--line);
+  background: var(--input);
+  color: var(--fg);
+  border-radius: 10px;
+  padding: 10px 12px;
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+.cp .cp-input::placeholder,
+.cp .cp-textarea::placeholder{ color: #97a6b6; }
+.cp .cp-textarea{ min-height: 110px; resize: vertical; }
+
+.cp .cp-input:focus,
+.cp .cp-select:focus,
+.cp .cp-textarea:focus{
+  border-color: #7aa7f8;
+  box-shadow: 0 0 0 3px rgba(37,99,235,.2);
+}
+
+/* ===== Arrays (repeaters) ===== */
+.cp .cp-repeat{ display: grid; gap: 10px; }
+
+.cp .cp-repeat-item{
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+  background: rgba(2,6,23,.02);
+}
+
+/* ===== Acciones & Botones ===== */
+.cp .cp-actions{
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.cp .cp-btn{
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: filter .15s ease, transform .06s ease, background .15s ease, color .15s ease, border-color .15s ease;
+}
+
+.cp .cp-btn:active{ transform: translateY(1px); }
+
+.cp .cp-btn-primary{
+  background: var(--primary);
+  color: var(--bg);
+}
+.cp .cp-btn-primary:hover{ filter: brightness(.92); }
+
+.cp .cp-btn-ghost{
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--line);
+}
+.cp .cp-btn-ghost:hover{
+  background: rgba(2,6,23,.04);
+}
+
+/* ===== Switch ===== */
+.cp .cp-switch{
+  --w: 44px; --h: 24px;
+  position: relative;
+  width: var(--w); height: var(--h);
+  display: inline-block;
+  border-radius: var(--h);
+  background: #e5e7eb;
+  border: 1px solid var(--line);
+}
+.cp .cp-switch input{
+  position: absolute; inset: 0;
+  margin: 0; opacity: 0; cursor: pointer;
+}
+.cp .cp-dot{
+  position: absolute; top: 50%; left: 3px; transform: translateY(-50%);
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  transition: left .16s ease;
+}
+.cp .cp-switch input:checked ~ .cp-dot{
+  left: calc(var(--w) - 21px);
+}
+
+/* ===== Mensajes ===== */
+.cp .cp-msg{
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: rgba(2,6,23,.02);
+  font-weight: 500;
+}
+.cp .cp-ok{ border-color: #86efac; }
+.cp .cp-err{ border-color: #fca5a5; }

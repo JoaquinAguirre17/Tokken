@@ -1,0 +1,97 @@
+/* CONTENEDOR */
+.iee-container {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    border: 1px solid #e5e7eb;
+}
+
+/* TITULO */
+.iee-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 18px;
+    color: #111827;
+}
+
+/* BOX */
+.iee-box {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* INPUT FILE */
+.iee-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 10px;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.iee-input:hover {
+    border-color: #2563eb;
+    background: #eff6ff;
+}
+
+/* BOTONES */
+.iee-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* BOTON BASE */
+.iee-btn {
+    border: none;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* BOTON PRINCIPAL */
+.iee-primary {
+    background: #2563eb;
+    color: white;
+}
+
+.iee-primary:hover {
+    background: #1d4ed8;
+}
+
+/* BOTON SECUNDARIO */
+.iee-secondary {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.iee-secondary:hover {
+    background: #e5e7eb;
+}
+
+/* DISABLED */
+.iee-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+
+    .iee-buttons {
+        flex-direction: column;
+    }
+
+    .iee-btn {
+        width: 100%;
+    }
+}

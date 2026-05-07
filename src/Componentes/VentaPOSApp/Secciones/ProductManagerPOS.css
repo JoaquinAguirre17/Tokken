@@ -1,0 +1,526 @@
+/* ────────────────────────────────────────────── */
+/* 🎨 VARIABLES BASE */
+.posgm {
+  --bg: #0f1217;
+  --card: #161b23;
+  --txt: #e5e7eb;
+  --muted: #9aa3af;
+  --b: #1f2937;
+  --b2: #374151;
+  --acc: #4f46e5;
+  --err: #ef4444;
+}
+
+/* ────────────────────────────────────────────── */
+/* 🧱 ESTRUCTURA GENERAL */
+.posgm {
+  background: var(--bg);
+  color: var(--txt);
+  padding: 20px;
+  border-radius: 16px;
+}
+
+/* ────────────────────────────────────────────── */
+/* 📌 HEADER */
+.posgm-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.posgm-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.posgm-title {
+  margin: 0;
+}
+
+/* ────────────────────────────────────────────── */
+/* 🔘 INPUTS Y BOTONES */
+.posgm-input,
+.posgm-select,
+.posgm-textarea {
+  width: 100%;
+  background: #0d1016;
+  color: var(--txt);
+  border: 1px solid var(--b);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.posgm-input:focus,
+.posgm-select:focus,
+.posgm-textarea:focus {
+  outline: none;
+  border-color: var(--b2);
+}
+.posgm-search {
+  min-width: 260px;
+}
+
+.posgm-btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.15s ease;
+}
+.posgm-btn-primary {
+  background: var(--acc);
+  color: #fff;
+}
+.posgm-btn-primary:hover {
+  filter: brightness(1.05);
+}
+.posgm-btn-ghost {
+  background: transparent;
+  color: var(--txt);
+  border: 1px solid var(--b2);
+}
+.posgm-btn-ghost:hover {
+  background: #0d1016;
+}
+.posgm-btn-danger {
+  background: var(--err);
+  color: #fff;
+}
+.posgm-btn-danger:hover {
+  filter: brightness(1.05);
+}
+
+/* ────────────────────────────────────────────── */
+/* ⚠️ ALERTAS */
+.posgm-alert {
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+.posgm-alert-err {
+  background: #2a1212;
+  color: #fecaca;
+  border: 1px solid #7f1d1d;
+}
+
+/* ────────────────────────────────────────────── */
+/* 🧩 GRID PRINCIPAL */
+.posgm-grid {
+  display: grid;
+  grid-template-columns: minmax(360px, 1fr) minmax(420px, 1fr);
+  gap: 16px;
+}
+@media (max-width: 1024px) {
+  .posgm-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ────────────────────────────────────────────── */
+/* 📦 TARJETAS */
+.posgm-card {
+  background: var(--card);
+  border: 1px solid var(--b);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+/* ────────────────────────────────────────────── */
+/* 🧾 TABLA DE PRODUCTOS CON SCROLL */
+.posgm-table-wrap {
+  max-height: 520px; /* ajustá según tu pantalla */
+  overflow: auto;
+  border-radius: 12px;
+}
+
+/* header sticky */
+.posgm-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--card);
+  z-index: 1;
+  box-shadow: inset 0 -1px 0 var(--b2);
+}
+
+.posgm-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.posgm-table th,
+.posgm-table td {
+  border-bottom: 1px solid var(--b);
+  padding: 10px;
+  text-align: left;
+}
+.posgm-table th {
+  color: #c7d2fe;
+  font-weight: 700;
+}
+.posgm-empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 20px;
+}
+
+/* Scrollbar personalizado */
+.posgm-table-wrap::-webkit-scrollbar {
+  width: 10px;
+}
+.posgm-table-wrap::-webkit-scrollbar-thumb {
+  background: #2b3040;
+  border-radius: 8px;
+}
+.posgm-table-wrap::-webkit-scrollbar-track {
+  background: #151823;
+}
+
+/* responsive */
+@media (max-width: 768px) {
+  .posgm-table-wrap {
+    max-height: 60vh;
+  }
+}
+
+/* ────────────────────────────────────────────── */
+/* 🏷️ ELEMENTOS DE FILA */
+.posgm-prod {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.posgm-thumb {
+  width: 42px;
+  height: 42px;
+  background: #0d1016 center/cover no-repeat;
+  border-radius: 8px;
+}
+.posgm-prod-info .posgm-name {
+  font-weight: 600;
+}
+.posgm-prod-info .posgm-sub {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.posgm-badge {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+.posgm-badge.ok {
+  background: #062d1c;
+  color: #86efac;
+  border: 1px solid #14532d;
+}
+.posgm-badge.warn {
+  background: #2a1c07;
+  color: #fcd34d;
+  border: 1px solid #854d0e;
+}
+.posgm-badge.muted {
+  background: #1f2937;
+  color: #cbd5e1;
+  border: 1px solid var(--b2);
+}
+
+.posgm-row-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ────────────────────────────────────────────── */
+/* 🧾 FORMULARIO */
+.posgm-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.posgm-form-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.posgm-tag {
+  background: #0b1220;
+  color: #93c5fd;
+  border: 1px solid #1d4ed8;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+.posgm-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.posgm-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 800px) {
+  .posgm-grid-2,
+  .posgm-grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.posgm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.posgm-label {
+  color: #cbd5e1;
+  font-size: 0.9rem;
+}
+.posgm-textarea {
+  min-height: 100px;
+}
+
+.posgm-sub {
+  margin: 6px 0;
+  color: #a5b4fc;
+  letter-spacing: 0.2px;
+}
+
+/* ────────────────────────────────────────────── */
+/* 🔁 LISTAS REPETIBLES (VARIANTES, IMÁGENES, ETC.) */
+.posgm-repeat {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.posgm-repeat-item {
+  background: #0d1016;
+  border: 1px solid var(--b);
+  border-radius: 12px;
+  padding: 12px;
+}
+.posgm-row-tools {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ────────────────────────────────────────────── */
+/* 💡 INTERRUPTORES */
+.posgm-inline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.posgm-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 44px;
+  height: 24px;
+  background: #111827;
+  border-radius: 999px;
+  border: 1px solid var(--b2);
+}
+.posgm-switch input {
+  display: none;
+}
+.posgm-knob {
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 18px;
+  height: 18px;
+  background: #6b7280;
+  border-radius: 50%;
+  transition: transform 0.18s ease;
+}
+.posgm-switch input:checked + .posgm-knob {
+  transform: translateX(18px);
+  background: #a7f3d0;
+}
+
+/* ────────────────────────────────────────────── */
+/* 🧭 ACCIONES DEL FORM */
+.posgm-form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 6px;
+}
+/* Botón flotante */
+.alerta-flotante {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #f56565;
+  color: white;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.alerta-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.alerta-contador {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: yellow;
+  color: black;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
+/* Modal */
+.modal-fondo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+
+.modal-contenido {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: #48bb78;
+  color: white;
+  border: none;
+}
+
+.btn-ghost {
+  background: #e2e8f0;
+  border: none;
+}/* ProductManagerPOS.css */
+
+/* ===== BOTÓN FLOTANTE ===== */
+.alerta-flotante {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: #ff0000;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  z-index: 1000;
+  transition: transform 0.2s;
+}
+.alerta-flotante:hover { transform: scale(1.1); }
+.alerta-icono { width: 30px; height: 30px; }
+.alerta-contador {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: red;
+  color: white;
+  font-weight: bold;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  animation: pop 0.3s ease;
+}
+@keyframes pop {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* ===== MODAL ===== */
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  animation: fadeIn 0.25s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-content {
+  background: #fff;
+  color: black;
+  padding: 25px;
+  border-radius: 12px;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  animation: slideIn 0.3s ease;
+}
+@keyframes slideIn { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.modal-content h3 { margin-top: 0; margin-bottom: 15px; font-size: 1.3rem; }
+.modal-content ul { max-height: 250px; overflow-y: auto; padding-left: 20px; margin-bottom: 20px; }
+.modal-content li { margin-bottom: 8px; }
+
+/* ===== BOTONES MODAL ===== */
+.btn-whatsapp {
+  background-color: #05fe12;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 15px;
+  margin: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-whatsapp:hover { background-color: #ff0101; }
+
+.btn-cerrar {
+  background-color: #f80505;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 15px;
+  margin: 10PX;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-cerrar:hover { background-color: #bbb; }
