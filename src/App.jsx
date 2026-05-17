@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import './App.css';
@@ -18,40 +18,133 @@ import Footer from './Componentes/Footer/Foteer.jsx';
 import VentaPOSApp from './Componentes/VentaPOSApp/VentaPOSApp.jsx';
 
 import CrearProductos from './Componentes/CrearProductos/CrearProductos.jsx';
+import ProtectedRoute from './Componentes/Auth/ProtectedRoute.jsx';
 
+function AppContent() {
 
+  const location = useLocation();
 
-function App() {
+  const isPOS =
+    location.pathname.startsWith("/venta");
+
   return (
-    <CartProvider>
-      <CategoriesProvider>
-        <Router>
-          <NavbarOffcanvas />
-          <Routes>
-            <Route path='/' element={<Home />} />
-            <Route path='/login' element={<Login />} />
-            <Route path="/carrito" element={<Carrito />} />
-            <Route path='/productos' element={<Productos/>}/>
-            <Route path='/crear-producto' element={<CrearProductos/>}/>
-            {/* Ruta dinámica para categorías y subcategorías */}
-            <Route path='/:category' element={<Productos />} />
-            <Route path='/:category/:subcategory' element={<Productos />} />
-            <Route path="/detalle/:id" element={<DetalleProducto />} />
-            <Route path="/venta/*" element={<VentaPOSApp />} /> {/* Ruta para el sistema de ventas */}
-            
-            <Route path="/orden-control/:draftOrderId" element={<OrdenControl />} />
 
-            {/* Ruta de fallback */}
-            <Route
-              path='*'
-              element={<h2 style={{ textAlign: 'center', marginTop: '20px' }}>Página no encontrada</h2>}
-            />
-          </Routes>
-          <Footer/>
-        </Router>
-      </CategoriesProvider>
-    </CartProvider>
+    <>
+
+      {/* ✅ ocultar navbar en POS */}
+
+      {!isPOS && <NavbarOffcanvas />}
+
+      <Routes>
+
+        <Route path='/' element={<Home />} />
+
+        <Route
+          path='/login'
+          element={<Login />}
+        />
+
+        <Route
+          path="/carrito"
+          element={<Carrito />}
+        />
+
+        <Route
+          path='/productos'
+          element={<Productos />}
+        />
+
+        <Route
+          path='/crear-producto'
+          element={
+            <ProtectedRoute
+              roles={["admin", "owner"]}
+            >
+              <CrearProductos />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path='/:category'
+          element={<Productos />}
+        />
+
+        <Route
+          path='/:category/:subcategory'
+          element={<Productos />}
+        />
+
+        <Route
+          path="/detalle/:id"
+          element={<DetalleProducto />}
+        />
+
+        <Route
+          path="/venta/*"
+          element={
+            <ProtectedRoute
+              roles={[
+                "admin",
+                "owner",
+                "vendedor"
+              ]}
+            >
+              <VentaPOSApp />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/orden-control/:draftOrderId"
+          element={<OrdenControl />}
+        />
+
+        <Route
+          path='*'
+          element={
+            <h2
+              style={{
+                textAlign: 'center',
+                marginTop: '20px'
+              }}
+            >
+              Página no encontrada
+            </h2>
+          }
+        />
+
+      </Routes>
+
+      {/* ✅ ocultar footer en POS */}
+
+      {!isPOS && <Footer />}
+
+    </>
+
   );
+
+}
+function App() {
+
+  return (
+
+    <CartProvider>
+
+      <CategoriesProvider>
+
+        <Router>
+
+          <AppContent />
+
+        </Router>
+
+      </CategoriesProvider>
+
+    </CartProvider>
+
+  );
+
 }
 
 export default App;

@@ -232,6 +232,7 @@ export default function ProductManagerPOS() {
 
   return (
     <div className="posgm">
+
       {/* HEADER, FORM, TABLA (tu JSX existente) */}
       <div className="posgm-head">
         <h2 className="posgm-title">Gestión de productos</h2>
@@ -248,9 +249,7 @@ export default function ProductManagerPOS() {
           <button className="posgm-btn posgm-btn-primary" onClick={resetForm}>
             Nuevo
           </button>
-        
-          <ImportExportExcel/>
-          
+
         </div>
 
         {error && <div className="posgm-alert posgm-alert-err">{error}</div>}
@@ -570,6 +569,9 @@ export default function ProductManagerPOS() {
                 </button>
               </div>
             </form>
+          </div>
+          <div className="componte1">
+            <ImportExportExcel />
           </div>
           {alertas.length > 0 && (
             <>

@@ -50,6 +50,45 @@ export default function CierreCaja() {
     a.download = "reporte_ventas.xlsx";
     a.click();
   };
+  const eliminarVenta = async (id) => {
+
+    const confirmar = window.confirm(
+      "¿Seguro que querés eliminar esta venta?"
+    );
+
+    if (!confirmar) return;
+
+    try {
+
+      const res = await fetch(
+        `${API}/orders/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      const json = await res.json();
+
+      if (!res.ok) {
+        throw new Error(
+          json.error || "Error al eliminar"
+        );
+      }
+
+      alert("Venta eliminada");
+
+      // 🔄 RECARGAR DATOS
+      obtenerVentas();
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(error.message);
+
+    }
+
+  };
 
   return (
     <div className="tokken-cierre-container">
@@ -203,23 +242,32 @@ export default function CierreCaja() {
           <table className="tokken-cierre-tabla">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Orden</th>
+                <th>Producto</th>
                 <th>Vendedor</th>
                 <th>Medio</th>
                 <th>Monto</th>
                 <th>Hora</th>
+                <th>Acciones</th>
               </tr>
             </thead>
+
             <tbody>
-              {data.ventas.map((v) => (
-                <tr key={v.id}>
-                  <td>{v.id}</td>
-                  <td>{v.nombre}</td>
+              {data.ventas.map((v, index) => (
+                <tr key={index}>
+                  <td>{v.producto}</td>
                   <td>{v.vendedor}</td>
                   <td>{v.medioPago}</td>
                   <td>${v.monto}</td>
                   <td>{v.hora}</td>
+
+                  <td>
+                    <button
+                      className="tokken-delete-btn"
+                      onClick={() => eliminarVenta(v.id)}
+                    >
+                      Eliminar
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

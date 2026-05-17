@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import SelectorVendedor from "./SelectorVendedor";
 import toast, { Toaster } from "react-hot-toast";
+import { useAuth } from "../../Contex/AuthContext";
 import "./Venta.css";
 
 const API_BASE = "https://tokkenback2.onrender.com/api";
@@ -57,7 +58,7 @@ export default function Venta() {
   const inputRef = useRef(null);
 
   const vendedores = ["Andrea", "Joaquin", "Thiago", "Victoria", "Gonzalo", "Alicia"];
-
+  const { sessionId } = useAuth();
   useEffect(() => {
 
     const fetchProducts = async () => {
@@ -175,8 +176,8 @@ export default function Venta() {
       total,
       descuentoPorcentaje: descuento,
       tags: ["pos"],
-      fecha: new Date().toISOString()
-
+      fecha: new Date().toISOString(),
+      sessionId 
     }
 
     try {
@@ -204,7 +205,14 @@ export default function Venta() {
     }
 
   }
-
+  const formatARS = (value) => {
+    return new Intl.NumberFormat("es-AR", {
+      style: "currency",
+      currency: "ARS",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(value);
+  };
   const descuentos = [0, 5, 10, 15, 20, 25, 30];
 
   return (
@@ -300,9 +308,8 @@ export default function Venta() {
                 onChange={e => actualizarCantidad(p.id, e.target.value)}
               />
 
-              <p>${p.precio}</p>
-
-              <p>${(p.precio * p.cantidad).toFixed(2)}</p>
+              <p>{formatARS(p.precio)}</p>
+              <p>{formatARS(p.precio * p.cantidad)}</p>
 
               <button onClick={() => eliminarProducto(p.id)}>✕</button>
 
@@ -335,7 +342,7 @@ export default function Venta() {
 
             <div className="venta-metodos">
 
-              {["Efectivo", "Transferencia", "Débito", "Crédito","QR Openpay"].map(mp => (
+              {["Efectivo", "Transferencia", "Débito", "Crédito", "QR Openpay"].map(mp => (
 
                 <button
                   key={mp}
@@ -353,7 +360,7 @@ export default function Venta() {
 
           </div>
 
-          <h2>Total ${total.toFixed(2)}</h2>
+          <h2>Total {formatARS(total)}</h2>
 
           <button
             className="venta-confirmar"
@@ -378,7 +385,7 @@ export default function Venta() {
 
             <p>Vendedor: {vendedorSeleccionado}</p>
             <p>Método: {metodoPago}</p>
-            <p>Total: ${total.toFixed(2)}</p>
+            <p>Total: {formatARS(total)}</p>
 
             <button onClick={() => setModal(false)}>Cancelar</button>
             <button onClick={confirmarVenta}>Confirmar</button>

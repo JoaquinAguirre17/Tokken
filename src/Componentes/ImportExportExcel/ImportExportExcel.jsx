@@ -69,7 +69,7 @@ export default function ImportExportExcel() {
     };
 
     return (
-        <div className="iee-container">
+        <div className="iee">
 
             <h2 className="iee-title">
                 Importar / Exportar Productos

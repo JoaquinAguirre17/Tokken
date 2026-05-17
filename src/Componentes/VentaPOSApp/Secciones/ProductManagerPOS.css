@@ -19,20 +19,25 @@
   padding: 20px;
   border-radius: 16px;
 }
-
+.componte1 {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 16px;
+}
 /* ────────────────────────────────────────────── */
 /* 📌 HEADER */
 .posgm-head {
-  display: flex;
+  
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
+  
+  gap: 2px;
+  margin-bottom: 5px;
 }
 
 .posgm-actions {
   display: flex;
-  gap: 8px;
+  gap: 1px;
+  margin-bottom: 10px;
 }
 
 .posgm-title {

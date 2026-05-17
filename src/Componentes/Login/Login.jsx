@@ -1,71 +1,104 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Login.css';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../Contex/AuthContext";
+import "./Login.css";
 
-const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+const API = "https://tokkenback2.onrender.com/api";
+
+export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch('https://papayawhip-koala-105915.hostingersite.com/wp-json/jwt-auth/v1/token', {
-        method: 'POST',
+      setLoading(true);
+
+      const res = await fetch(`${API}/auth/login`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: username,
-          password: password,
+          username,
+          password,
         }),
       });
 
-      const data = await response.json();
+      const data = await res.json();
 
-      if (response.ok && data.token) {
-        localStorage.setItem('token', data.token);
-        navigate('/admin'); // Redirigir al panel de administración
-      } else {
-        setMessage(`Error: ${data.message || 'Credenciales incorrectas'}`);
+      if (!res.ok) {
+        alert(data.error || "Error login");
+        return;
       }
+
+      /* =========================
+         TOKEN
+      ========================= */
+      localStorage.setItem("token", data.token);
+
+      /* =========================
+         SESSION ID
+      ========================= */
+      localStorage.setItem("sessionId", data.sessionId);
+
+      /* =========================
+         USER
+      ========================= */
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      login(data.user);
+
+      /* =========================
+         REDIRECT UNIFICADO POS
+      ========================= */
+
+      const rol = data.user.rol;
+
+      if (rol === "vendedor") {
+        navigate("/venta/venta");
+      } else if (rol === "admin" || rol === "owner") {
+        navigate("/venta/venta"); // 👈 IMPORTANTE: entra al POS completo
+      } else {
+        navigate("/login");
+      }
+
     } catch (error) {
-      console.error('Error:', error);
-      setMessage('Hubo un error al intentar iniciar sesión.');
+      console.error(error);
+      alert("Error servidor");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="login-container">
-      <h2 className="login-title">INICIAR SESIÓN</h2>
       <form className="login-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label className="form-label">Nombre de Usuario</label>
-          <input
-            type="text"
-            className="form-input"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label className="form-label">Contraseña</label>
-          <input
-            type="password"
-            className="form-input"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" className="submit-button">Entrar</button>
+        <h2>Iniciar sesión</h2>
+
+        <input
+          type="text"
+          placeholder="Usuario"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+
+        <input
+          type="password"
+          placeholder="Contraseña"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button type="submit">
+          {loading ? "Ingresando..." : "Ingresar"}
+        </button>
       </form>
-      {message && <p className="message">{message}</p>}
     </div>
   );
-};
-
-export default Login;
+}
