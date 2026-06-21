@@ -12,7 +12,7 @@ export const CategoriesProvider = ({ children }) => {
 
   // Función para obtener las categorías y subcategorías desde la API
   const fetchCategories = async () => {
-    const API_URL = 'https://appencuentro.pagliardini.com/wp-json/wc/v3/products/categories';
+   
     const token = localStorage.getItem('jwt_token');
 
     try {

@@ -123,7 +123,7 @@ function NavbarOffcanvas() {
               <div className="categoriass">
                 <DropdownMenu title="Telefonia" categories={[
                   'Auriculares','Cargadores','Cables','Auriculares Inalambricos',
-                  'Accesorios para dispositivos','Adaptadores','Receptores Bluetooth'
+                  'Accesorios para dispositivos','Adaptadores','Receptores Bluetooth','Dispositivos moviles'
                 ]} onClick={handleLinkClick} />
                 <DropdownMenu title="Gamer" categories={[
                   'Cables','Auriculares','Accesorios para juegos',

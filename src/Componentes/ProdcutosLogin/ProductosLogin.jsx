@@ -44,7 +44,7 @@ const ProductosLogin = () => {
     const formData = new FormData();
     formData.append('file', image);
 
-    try {
+    /*try {
       // Subir la imagen
       const imageResponse = await axios.post('https://papayawhip-koala-105915.hostingersite.com/wp-json/wp/v2/media', formData, {
         headers: {
@@ -96,8 +96,8 @@ const ProductosLogin = () => {
         <button onClick={() => setIsModalOpen(true)}>Añadir Producto</button>
       </div>
 
-      {/* Modal de Añadir Producto */}
-      {isModalOpen && (
+      {/* Modal de Añadir Producto */
+      /*{isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
             <button className="modal-close" onClick={() => setIsModalOpen(false)}>X</button>
@@ -146,8 +146,8 @@ const ProductosLogin = () => {
           </div>
         </div>
       )}
-    </>
-  );
+    </>*/
+  }
 };
 
 export default ProductosLogin;

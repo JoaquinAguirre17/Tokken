@@ -1,0 +1,42 @@
+.personal-container {
+  padding: 20px;
+}
+
+.personal-filtros {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  align-items: end;
+}
+
+.personal-filtros div {
+  display: flex;
+  flex-direction: column;
+}
+
+.personal-table,
+.personal-detalle table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.personal-table th,
+.personal-table td,
+.personal-detalle th,
+.personal-detalle td {
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+
+.personal-table tr {
+  cursor: pointer;
+}
+
+.personal-table tr:hover {
+  background: #f5f5f5;
+}
+
+.personal-detalle {
+  margin-top: 30px;
+}

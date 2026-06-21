@@ -245,6 +245,7 @@ export default function CierreCaja() {
                 <th>Producto</th>
                 <th>Vendedor</th>
                 <th>Medio</th>
+                <th>Descuento</th>
                 <th>Monto</th>
                 <th>Hora</th>
                 <th>Acciones</th>
@@ -257,6 +258,7 @@ export default function CierreCaja() {
                   <td>{v.producto}</td>
                   <td>{v.vendedor}</td>
                   <td>{v.medioPago}</td>
+                  <td>{v.descuento}%</td>
                   <td>${v.monto}</td>
                   <td>{v.hora}</td>
 

@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 
 import { useAuth }
-from "../Contex/AuthContext";
+  from "../Contex/AuthContext";
 
 export default function ProtectedRoute({
 
@@ -11,41 +11,20 @@ export default function ProtectedRoute({
 
 }) {
 
-  const { user } =
-    useAuth();
+  const { user, loading } = useAuth();
 
-  // ❌ no logueado
+  console.log("🔐 PROTECTED ROUTE", {
+    user,
+    loading
+  });
 
-  if (!user) {
-
-    return (
-      <Navigate
-        to="/login"
-        replace
-      />
-    );
-
+  if (loading) {
+    return <div>Cargando...</div>;
   }
 
-  // ❌ sin permisos
-
-  if (
-
-    roles.length > 0 &&
-
-    !roles.includes(user.rol)
-
-  ) {
-
-    return (
-      <Navigate
-        to="/venta/venta"
-        replace
-      />
-    );
-
+  if (!user) {
+    return <Navigate to="/login" replace />;
   }
 
   return children;
-
 }

@@ -43,9 +43,9 @@ const AddProduct = ({ isOpen, closeModal }) => {
     const formData = new FormData();
     formData.append('file', image);
 
-    try {
+    /*try {
       // Subir la imagen
-      const imageResponse = await axios.post('https://papayawhip-koala-105915.hostingersite.com/wp-json/wp/v2/media', formData, {
+     /* const imageResponse = await axios.post('https://papayawhip-koala-105915.hostingersite.com/wp-json/wp/v2/media', formData, {
         headers: {
           'Authorization': 'Basic ' + btoa('ck_680755a33acecf9d418d84a5c19ed42dcff24a19:cs_f2a41a6ee18a5e004f0f96990c89042758c671f8'),
           'Content-Type': 'multipart/form-data',
@@ -138,8 +138,8 @@ const AddProduct = ({ isOpen, closeModal }) => {
           <button type="submit">Añadir Producto</button>
         </form>
       </div>
-    </div>
-  );
+    </div>*/
+  }
 };
 
 export default AddProduct;

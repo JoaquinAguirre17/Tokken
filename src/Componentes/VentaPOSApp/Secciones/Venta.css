@@ -1,502 +1,344 @@
 /* =========================
-   CONFIG GLOBAL
+   BASE
 ========================= */
-
-.venta-app{
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
-  background:#f4f6fa;
-  min-height:100vh;
-  padding:25px;
-  color:#1f2937;
+.venta-app {
+  padding: 20px;
+  background: #0f172a;
+  min-height: 100vh;
+  color: #e2e8f0;
+  font-family: Arial, sans-serif;
 }
 
 /* =========================
-   LAYOUT
+   LAYOUT GENERAL
 ========================= */
-
-.venta-layout{
-  display:grid;
-  grid-template-columns: 2fr 1fr;
-  gap:25px;
+.venta-layout {
+  display: flex;
+  gap: 20px;
 }
 
 /* =========================
-   TARJETAS
+   PANEL IZQUIERDO
 ========================= */
+.venta-sistema {
+  flex: 2;
+  background: #111827;
+  padding: 15px;
+  border-radius: 12px;
+}
 
-.venta-sistema,
-.venta-carrito-container{
-  background:white;
-  padding:22px;
-  border-radius:14px;
-  box-shadow:0 6px 20px rgba(0,0,0,0.06);
+.venta-title {
+  margin-bottom: 15px;
+}
+
+/* filtros */
+.venta-filtros {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.venta-input,
+.venta-select {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  width: 100%;
+}
+
+/* productos */
+.venta-resultados {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.venta-producto {
+  background: #1f2937;
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.venta-producto:hover {
+  transform: scale(1.03);
+  background: #334155;
+}
+
+.venta-producto-img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.venta-producto-stock {
+  color: #0df704;
 }
 
 /* =========================
-   TITULOS
+   CARRITO NUEVO PRO
 ========================= */
 
-.venta-titulo{
-  font-size:22px;
-  font-weight:700;
-  margin-bottom:15px;
+.venta-carrito-container {
+  flex: 1;
+  background: linear-gradient(145deg, #0b1220, #0f172a);
+  padding: 15px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* HEADER */
+.venta-carrito-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* HEADER COLUMNAS */
+.venta-carrito-header {
+  display: grid;
+  grid-template-columns: 1fr 70px 90px 30px;
+  font-size: 12px;
+  color: #94a3b8;
+  padding: 8px 5px;
+  border-bottom: 1px solid #1f2937;
+  margin-bottom: 8px;
+}
+
+/* LISTA SCROLL */
+.venta-carrito-lista {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 420px;
+  padding-right: 5px;
+}
+
+/* ITEM */
+.venta-carrito-item {
+  display: grid;
+  grid-template-columns: 1fr 70px 90px 30px;
+  align-items: center;
+  gap: 5px;
+
+  background: #111827;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+
+  transition: 0.2s;
+}
+
+.venta-carrito-item:hover {
+  background: #1f2937;
+}
+
+/* NOMBRE */
+.venta-carrito-nombre {
+  font-size: 13px;
+  font-weight: 500;
+  color: #e2e8f0;
+}
+
+/* INPUT CANTIDAD */
+.venta-carrito-cantidad {
+  width: 60px;
+  padding: 6px;
+  border-radius: 6px;
+  border: none;
+  text-align: center;
+  background: #0f172a;
+  color: white;
+}
+
+/* TOTAL */
+.venta-carrito-total {
+  font-weight: bold;
+  color: #22c55e;
+  font-size: 13px;
+  text-align: right;
+}
+
+/* DELETE */
+.venta-carrito-delete {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.venta-carrito-delete:hover {
+  transform: scale(1.2);
+}
+
+/* FOOTER */
+.venta-carrito-footer {
+  margin-top: 10px;
+  border-top: 1px solid #1f2937;
+  padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* TOTAL GENERAL */
+.venta-carrito-total-general {
+  font-size: 18px;
+  font-weight: bold;
+  color: #3b82f6;
 }
 
 /* =========================
-   BUSCADOR
+   BOTONES GENERALES
 ========================= */
-
-.venta-filtros{
-  display:flex;
-  gap:12px;
-  margin-bottom:20px;
+.venta-btn-vaciar {
+  margin-top: 10px;
+  padding: 10px;
+  border: none;
+  background: #ef4444;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
-.venta-buscador{
-  flex:1;
-  padding:12px 14px;
-  border-radius:8px;
-  border:1px solid #d1d5db;
-  font-size:14px;
-  transition:.2s;
-}
-
-.venta-buscador:focus{
-  outline:none;
-  border-color:#2563eb;
-  box-shadow:0 0 0 2px rgba(37,99,235,0.15);
-}
-
-.venta-select-categoria{
-  padding:12px;
-  border-radius:8px;
-  border:1px solid #d1d5db;
-  font-size:14px;
-  background:white;
-  cursor:pointer;
+.venta-descuento {
+  margin-top: 10px;
+  padding: 8px;
+  border-radius: 8px;
 }
 
 /* =========================
-   PRODUCTOS
+   MÉTODOS DE PAGO
 ========================= */
-
-.venta-resultados{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-  gap:16px;
-  max-height:650px;
-  overflow:auto;
-  padding-right:4px;
+.metodos-pago {
+  margin-top: 15px;
 }
 
-/* tarjeta producto */
-
-.venta-producto{
-  background:#fff;
-  border:1px solid #eef0f3;
-  border-radius:12px;
-  padding:12px;
-  text-align:center;
-  cursor:pointer;
-  transition:all .2s ease;
+.metodos-title {
+  margin-bottom: 8px;
 }
 
-.venta-producto:hover{
-  transform:translateY(-4px);
-  box-shadow:0 8px 18px rgba(0,0,0,0.08);
-  border-color:#2563eb33;
+.metodos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
 }
 
-.venta-producto img{
-  width:85px;
-  height:85px;
-  object-fit:contain;
-  margin-bottom:6px;
+.metodo-btn {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background: #1f2937;
+  color: white;
+  transition: 0.2s;
 }
 
-.venta-producto p{
-  font-size:13px;
-  margin:4px 0;
-  min-height:32px;
+.metodo-btn:hover {
+  background: #334155;
 }
 
-.venta-producto b{
-  color:#111827;
-  font-size:15px;
-}
-
-.venta-producto small{
-  color:#6b7280;
-  font-size:12px;
+.metodo-btn.activo {
+  background: #22c55e;
+  color: black;
+  font-weight: bold;
 }
 
 /* =========================
-   CARRITO
+   TOTAL + CONFIRMAR
 ========================= */
-
-.venta-carrito-container h3{
-  margin-bottom:15px;
+.venta-total {
+  margin-top: 15px;
+  font-size: 20px;
+  font-weight: bold;
 }
 
-/* item carrito */
-
-.venta-item-carrito{
-  display:grid;
-  grid-template-columns:1fr 60px 80px 80px 32px;
-  align-items:center;
-  gap:6px;
-  border-bottom:1px solid #f0f1f3;
-  padding:8px 0;
-  font-size:14px;
-}
-
-.venta-item-carrito p{
-  margin:0;
-}
-
-.venta-item-carrito input{
-  width:55px;
-  padding:4px;
-  border-radius:5px;
-  border:1px solid #ddd;
-  text-align:center;
-}
-
-.venta-item-carrito button{
-  background:#ef4444;
-  border:none;
-  color:white;
-  border-radius:6px;
-  cursor:pointer;
-  height:26px;
-  width:26px;
-  font-size:14px;
-  transition:.2s;
-}
-
-.venta-item-carrito button:hover{
-  background:#dc2626;
-}
-
-/* =========================
-   DESCUENTO
-========================= */
-
-.venta-descuento{
-  margin-top:15px;
-}
-
-.venta-descuento label{
-  font-size:13px;
-  color:#374151;
-}
-
-.venta-descuento select{
-  width:100%;
-  padding:10px;
-  border-radius:6px;
-  border:1px solid #ddd;
-  margin-top:6px;
-}
-
-/* =========================
-   METODOS DE PAGO
-========================= */
-
-.venta-metodo-pago{
-  margin-top:18px;
-}
-
-.venta-metodo-pago label{
-  font-size:13px;
-}
-
-.venta-metodos{
-  margin-top:10px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-}
-
-.venta-metodos button{
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #e5e7eb;
-  background:#f9fafb;
-  cursor:pointer;
-  font-size:13px;
-  transition:.2s;
-}
-
-.venta-metodos button:hover{
-  background:#eef2ff;
-  border-color:#c7d2fe;
-}
-
-.venta-metodos button.activo{
-  background:#2563eb;
-  color:white;
-  border-color:#2563eb;
-}
-
-/* =========================
-   TOTAL
-========================= */
-
-.venta-carrito-container h2{
-  margin-top:15px;
-  font-size:24px;
-  color:#111827;
-}
-
-/* =========================
-   BOTON CONFIRMAR
-========================= */
-
-.venta-confirmar{
-  margin-top:15px;
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:10px;
-  font-size:15px;
-  font-weight:600;
-  background:#22c55e;
-  color:white;
-  cursor:pointer;
-  transition:.2s;
-}
-
-.venta-confirmar:hover{
-  background:#16a34a;
-  transform:translateY(-1px);
+.venta-btn-confirmar {
+  margin-top: 10px;
+  padding: 12px;
+  background: #3b82f6;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
 }
 
 /* =========================
    MODAL
 ========================= */
-
-.venta-modal-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.45);
-  display:flex;
-  align-items:center;
-  justify-content:center;
+.venta-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
-.venta-modal{
-  background:white;
-  padding:26px;
-  border-radius:12px;
-  width:320px;
-  text-align:center;
-  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+.venta-modal {
+  background: #111827;
+  padding: 20px;
+  border-radius: 12px;
+  width: 320px;
+  text-align: center;
 }
 
-.venta-modal h3{
-  margin-bottom:10px;
+.venta-modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
 }
 
-.venta-modal button{
-  margin-top:12px;
-  padding:10px 14px;
-  border:none;
-  border-radius:7px;
-  cursor:pointer;
+.venta-btn-cancelar {
+  flex: 1;
+  padding: 10px;
+  background: #ef4444;
+  border: none;
+  border-radius: 8px;
+  color: white;
 }
 
-.venta-modal button:first-of-type{
-  background:#e5e7eb;
+.venta-btn-confirmar-modal {
+  flex: 1;
+  padding: 10px;
+  background: #22c55e;
+  border: none;
+  border-radius: 8px;
+  color: black;
+  font-weight: bold;
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-.venta-modal button:last-of-type{
-  background:#22c55e;
-  color:white;
+img {
+  max-width: 100%;
+  display: block;
 }
 
-/* =========================
-   SCROLL
-========================= */
-
-.venta-resultados::-webkit-scrollbar{
-  width:6px;
+.venta-layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  flex-wrap: wrap;
 }
 
-.venta-resultados::-webkit-scrollbar-thumb{
-  background:#d1d5db;
-  border-radius:4px;
+.venta-sistema {
+  flex: 2 1 700px;
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media (max-width:1000px){
-
-.venta-layout{
-  grid-template-columns:1fr;
+.venta-carrito-container {
+  flex: 1 1 350px;
 }
 
-.venta-resultados{
-  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
-}
-
-} 
-/* =========================
-   RESPONSIVE MOBILE
-========================= */
-
-@media (max-width: 768px) {
-
-  .venta-app{
-    padding:12px;
-  }
-
-  .venta-layout{
-    grid-template-columns:1fr;
-    gap:16px;
-  }
-
-  .venta-sistema,
-  .venta-carrito-container{
-    padding:14px;
-    border-radius:12px;
-  }
-
-  .venta-titulo{
-    font-size:20px;
-    text-align:center;
-  }
-
-  /* filtros */
-
-  .venta-filtros{
-    flex-direction:column;
-    gap:10px;
-  }
-
-  .venta-buscador,
-  .venta-select-categoria{
-    width:100%;
-    font-size:16px;
-  }
-
-  /* productos */
-
-  .venta-resultados{
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-    max-height:none;
-    overflow:visible;
-  }
-
-  .venta-producto{
-    padding:10px;
-  }
-
-  .venta-producto img{
-    width:70px;
-    height:70px;
-  }
-
-  .venta-producto p{
-    font-size:12px;
-    min-height:auto;
-  }
-
-  .venta-producto b{
-    font-size:14px;
-  }
-
-  /* carrito */
-
-  .venta-item-carrito{
-    grid-template-columns:1fr;
-    gap:8px;
-    padding:12px 0;
-    text-align:left;
-  }
-
-  .venta-item-carrito input{
-    width:100%;
-    max-width:90px;
-  }
-
-  .venta-item-carrito button{
-    width:100%;
-    height:36px;
-    border-radius:8px;
-  }
-
-  /* métodos de pago */
-
-  .venta-metodos{
-    grid-template-columns:1fr;
-  }
-
-  .venta-metodos button{
-    width:100%;
-  }
-
-  /* total */
-
-  .venta-carrito-container h2{
-    font-size:22px;
-    text-align:center;
-  }
-
-  /* confirmar */
-
-  .venta-confirmar{
-    padding:16px;
-    font-size:16px;
-  }
-
-  /* modal */
-
-  .venta-modal{
-    width:90%;
-    max-width:340px;
-    padding:20px;
-  }
-
-}
-
-/* =========================
-   EXTRA SMALL DEVICES
-========================= */
-
-@media (max-width: 480px) {
-
-  .venta-app{
-    padding:8px;
-  }
-
-  .venta-resultados{
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-  }
-
-  .venta-producto{
-    padding:8px;
-  }
-
-  .venta-producto img{
-    width:60px;
-    height:60px;
-  }
-
-  .venta-producto p{
-    font-size:11px;
-  }
-
-  .venta-producto b{
-    font-size:13px;
-  }
-
-  .venta-confirmar{
-    font-size:15px;
-  }
-
+.venta-modal {
+  width: min(95%, 420px);
 }

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import SelectorVendedor from "./SelectorVendedor";
 import toast, { Toaster } from "react-hot-toast";
 import { useAuth } from "../../Contex/AuthContext";
 import "./Venta.css";
@@ -17,7 +16,6 @@ const CATEGORIAS = [
 ];
 
 function normalizeProduct(p) {
-
   const variant = p?.variants?.[0] || {};
 
   return {
@@ -35,11 +33,9 @@ function normalizeProduct(p) {
       Number(variant?.inventory_quantity) ||
       0
   };
-
 }
 
 export default function Venta() {
-
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -47,65 +43,69 @@ export default function Venta() {
   const [categoria, setCategoria] = useState("");
 
   const [carrito, setCarrito] = useState([]);
-
   const [metodoPago, setMetodoPago] = useState("Efectivo");
-  const [vendedorSeleccionado, setVendedorSeleccionado] = useState("");
-
+  const [cuotas, setCuotas] = useState(1);
   const [descuento, setDescuento] = useState(0);
 
   const [modal, setModal] = useState(false);
 
   const inputRef = useRef(null);
 
-  const vendedores = ["Andrea", "Joaquin", "Thiago", "Victoria", "Gonzalo", "Alicia"];
-  const { sessionId } = useAuth();
+  const { sessionId, user } = useAuth();
+
+  const vendedor = user?.name || user?.username || "Desconocido";
+
+  /* =========================
+     CARGA PRODUCTOS
+  ========================= */
   useEffect(() => {
-
     const fetchProducts = async () => {
+      try {
+        const res = await fetch(API_PRODUCTS);
+        const data = await res.json();
 
-      const res = await fetch(API_PRODUCTS);
-      const data = await res.json();
+        const raw = Array.isArray(data) ? data : data.products || [];
 
-      const raw = Array.isArray(data) ? data : data.products || [];
-
-      setProductos(raw.map(normalizeProduct));
-      setLoading(false);
-
-    }
+        setProductos(raw.map(normalizeProduct));
+      } catch (error) {
+        console.error("Error productos:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchProducts();
-
   }, []);
 
-  const resultados = productos.filter(p =>
-    (categoria === "" || p.category === categoria) &&
-    p.title.toLowerCase().includes(busqueda.toLowerCase())
+  /* =========================
+     FILTRO PRODUCTOS
+  ========================= */
+  const resultados = productos.filter(
+    (p) =>
+      (categoria === "" || p.category === categoria) &&
+      p.title.toLowerCase().includes(busqueda.toLowerCase())
   );
 
+  /* =========================
+     AGREGAR PRODUCTO
+  ========================= */
   const agregarProducto = (prod) => {
+    if (prod.stock <= 0) return toast.error("Sin stock");
 
-    if (prod.stock <= 0) {
-      toast.error("Sin stock");
-      return;
-    }
-
-    setCarrito(prev => {
-
-      const existe = prev.find(p => p.id === prod.id);
+    setCarrito((prev) => {
+      const existe = prev.find((p) => p.id === prod.id);
 
       if (existe) {
-
         if (existe.cantidad >= prod.stock) {
           toast.error("Stock máximo");
           return prev;
         }
 
-        return prev.map(p =>
+        return prev.map((p) =>
           p.id === prod.id
             ? { ...p, cantidad: p.cantidad + 1 }
             : p
-        )
-
+        );
       }
 
       return [
@@ -117,76 +117,91 @@ export default function Venta() {
           cantidad: 1,
           stock: prod.stock
         }
-      ]
+      ];
+    });
+  };
 
-    })
+  /* =========================
+     ELIMINAR
+  ========================= */
+  const eliminarProducto = (id) =>
+    setCarrito((prev) => prev.filter((p) => p.id !== id));
 
-  }
-
-  const eliminarProducto = id => {
-    setCarrito(prev => prev.filter(p => p.id !== id))
-  }
-
+  /* =========================
+     ACTUALIZAR CANTIDAD
+  ========================= */
   const actualizarCantidad = (id, cant) => {
-
     const n = parseInt(cant);
-
     if (isNaN(n) || n < 1) return;
 
-    setCarrito(prev =>
-      prev.map(p =>
+    setCarrito((prev) =>
+      prev.map((p) =>
         p.id === id
           ? { ...p, cantidad: Math.min(n, p.stock) }
           : p
       )
-    )
+    );
+  };
+
+  /* =========================
+     TOTALES
+  ========================= */
+const totalSinDesc = carrito.reduce(
+  (a, p) => a + p.precio * p.cantidad,
+  0
+);
+
+const subtotal =
+  totalSinDesc -
+  (totalSinDesc * descuento) / 100;
+
+  let porcentajeRecargo = 0;
+
+  if (metodoPago === "Crédito") {
+
+    if (cuotas === 3) {
+      porcentajeRecargo = 10;
+    }
+
+    if (cuotas === 6) {
+      porcentajeRecargo = 20;
+    }
 
   }
 
-  const totalSinDesc = carrito.reduce(
-    (a, p) => a + p.precio * p.cantidad,
-    0
-  )
-
-  const total = totalSinDesc - (totalSinDesc * descuento) / 100;
-
+  const total =
+    subtotal +
+    (subtotal * porcentajeRecargo / 100);
+  /* =========================
+     CONFIRMAR VENTA
+  ========================= */
   const confirmarVenta = async () => {
-
-    if (!vendedorSeleccionado) {
-      toast.error("Seleccioná vendedor");
-      return;
-    }
-
-    if (carrito.length === 0) {
-      toast.error("Carrito vacío");
-      return;
-    }
+    if (carrito.length === 0)
+      return toast.error("Carrito vacío");
 
     const venta = {
-
-      productos: carrito.map(p => ({
+      productos: carrito.map((p) => ({
         productId: p.id,
         title: p.title,
         precio: p.precio,
         cantidad: p.cantidad
       })),
-
       metodoPago,
-      vendedor: vendedorSeleccionado,
+      cuotas,
+      vendedor,
       total,
       descuentoPorcentaje: descuento,
       tags: ["pos"],
       fecha: new Date().toISOString(),
-      sessionId 
-    }
+      sessionId
+    };
 
     try {
-
       const resp = await fetch(API_ORDERS, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(venta)
-      })
+      });
 
       if (!resp.ok) throw new Error();
 
@@ -197,207 +212,273 @@ export default function Venta() {
       setBusqueda("");
 
       inputRef.current?.focus();
-
     } catch {
-
-      toast.error("Error registrando venta")
-
+      toast.error("Error registrando venta");
     }
+  };
 
-  }
-  const formatARS = (value) => {
-    return new Intl.NumberFormat("es-AR", {
+  /* =========================
+     FORMATO MONEDA
+  ========================= */
+  const formatARS = (value) =>
+    new Intl.NumberFormat("es-AR", {
       style: "currency",
       currency: "ARS",
-      minimumFractionDigits: 0,
       maximumFractionDigits: 0
     }).format(value);
-  };
+
   const descuentos = [0, 5, 10, 15, 20, 25, 30];
 
   return (
-
     <div className="venta-app">
-
       <Toaster position="top-right" />
 
       <div className="venta-layout">
 
+        {/* =========================
+          PANEL IZQUIERDO (PRODUCTOS)
+      ========================= */}
         <div className="venta-sistema">
-
-          <h2 className="venta-titulo">Sistema de Venta</h2>
-
-          <SelectorVendedor
-            vendedores={vendedores}
-            vendedorSeleccionado={vendedorSeleccionado}
-            setVendedorSeleccionado={setVendedorSeleccionado}
-          />
+          <h2 className="venta-title">Sistema de Venta</h2>
 
           <div className="venta-filtros">
-
             <input
               ref={inputRef}
-              type="text"
+              className="venta-input"
               placeholder="Buscar producto..."
               value={busqueda}
-              onChange={e => setBusqueda(e.target.value)}
-              className="venta-buscador"
+              onChange={(e) => setBusqueda(e.target.value)}
             />
 
             <select
+              className="venta-select"
               value={categoria}
-              onChange={e => setCategoria(e.target.value)}
-              className="venta-select-categoria"
+              onChange={(e) => setCategoria(e.target.value)}
             >
-
-              {CATEGORIAS.map(cat => (
-                <option key={cat.value} value={cat.value}>
-                  {cat.label}
+              {CATEGORIAS.map((c) => (
+                <option key={c.value} value={c.value}>
+                  {c.label}
                 </option>
               ))}
-
             </select>
-
           </div>
 
-          {loading
-            ? <p>Cargando...</p>
-            : (
-
-              <div className="venta-resultados">
-
-                {resultados.map(prod => (
-
-                  <div
-                    key={prod.id}
-                    className="venta-producto"
-                    onClick={() => agregarProducto(prod)}
-                  >
-
-                    <img src={prod.image} alt={prod.title} />
-
-                    <p>{prod.title}</p>
-
-                    <b>${prod.price}</b>
-
-                    <small>Stock {prod.stock}</small>
-
+          {loading ? (
+            <p className="venta-loading">Cargando...</p>
+          ) : (
+            <div className="venta-resultados">
+              {resultados.map((p) => (
+                <div
+                  key={p.id}
+                  className="venta-producto"
+                  onClick={() => agregarProducto(p)}
+                >
+                  <img src={p.image} className="venta-producto-img" />
+                  <div className="venta-producto-info">
+                    <p>{p.title}</p>
+                    <b>{formatARS(p.price)}</b>
+                    <small className="venta-producto-stock">  Stock {p.stock}</small>
                   </div>
-
-                ))}
-
-              </div>
-
-            )}
-
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
+        {/* =========================
+          PANEL DERECHO (CARRITO)
+      ========================= */}
         <div className="venta-carrito-container">
+          <h3 className="venta-carrito-title">🛒 Carrito</h3>
 
-          <h3>Carrito</h3>
-
-          {carrito.map(p => (
-
-            <div key={p.id} className="venta-item-carrito">
-
-              <p>{p.title}</p>
-
-              <input
-                type="number"
-                value={p.cantidad}
-                onChange={e => actualizarCantidad(p.id, e.target.value)}
-              />
-
-              <p>{formatARS(p.precio)}</p>
-              <p>{formatARS(p.precio * p.cantidad)}</p>
-
-              <button onClick={() => eliminarProducto(p.id)}>✕</button>
-
-            </div>
-
-          ))}
-
-          <button onClick={() => setCarrito([])}>Vaciar carrito</button>
-
-          <div className="venta-descuento">
-
-            <label>Descuento</label>
-
-            <select
-              value={descuento}
-              onChange={e => setDescuento(parseInt(e.target.value))}
-            >
-
-              {descuentos.map(d => (
-                <option key={d} value={d}>{d}%</option>
-              ))}
-
-            </select>
-
+          <div className="venta-carrito-header">
+            <span>Producto</span>
+            <span>Cant.</span>
+            <span>Total</span>
           </div>
 
-          <div className="venta-metodo-pago">
+          <div className="venta-carrito-lista">
+            {carrito.map((p) => (
+              <div key={p.id} className="venta-carrito-item">
 
-            <label>Método de Pago</label>
+                <div className="venta-carrito-nombre">
+                  {p.title}
+                </div>
 
-            <div className="venta-metodos">
+                <input
+                  className="venta-carrito-cantidad"
+                  type="number"
+                  value={p.cantidad}
+                  onChange={(e) =>
+                    actualizarCantidad(p.id, e.target.value)
+                  }
+                />
 
-              {["Efectivo", "Transferencia", "Débito", "Crédito", "QR Openpay"].map(mp => (
+                <div className="venta-carrito-total">
+                  {formatARS(p.precio * p.cantidad)}
+                </div>
 
                 <button
-                  key={mp}
-                  className={metodoPago === mp ? "activo" : ""}
-                  onClick={() => setMetodoPago(mp)}
+                  className="venta-carrito-delete"
+                  onClick={() => eliminarProducto(p.id)}
                 >
-
-                  {mp}
-
+                  ✕
                 </button>
 
-              ))}
+              </div>
+            ))}
+          </div>
+
+          <div className="venta-carrito-footer">
+            <button
+              className="venta-btn-vaciar"
+              onClick={() => setCarrito([])}
+            >
+              Vaciar carrito
+            </button>
+
+            <div className="venta-carrito-total-general">
+              Total: {formatARS(total)}
+            </div>
+          </div>
+
+          <select
+            className="venta-descuento"
+            value={descuento}
+            onChange={(e) => setDescuento(Number(e.target.value))}
+          >
+            {descuentos.map((d) => (
+              <option key={d} value={d}>
+                {d}% descuento
+              </option>
+            ))}
+          </select>
+
+          {/* =========================
+            MÉTODOS DE PAGO
+        ========================= */}
+          <div className="metodos-pago">
+            <p className="metodos-title">Método de pago</p>
+
+            <div className="metodos-grid">
+              {["Efectivo", "Transferencia", "Débito", "Crédito", "QR Openpay"].map(
+                (m) => (
+                  <button
+                    key={m}
+                    onClick={() => {
+
+                      setMetodoPago(m);
+
+                      if (m !== "Crédito") {
+                        setCuotas(1);
+                      }
+
+                    }}
+                    className={
+                      `metodo-btn ${metodoPago === m
+                        ? "activo"
+                        : ""
+                      }`
+                    }
+                  >
+                    {m}
+                  </button>
+                )
+              )}
+            </div>
+          </div>
+          {metodoPago === "Crédito" && (
+
+            <div className="venta-cuotas">
+
+              <label>
+                Cuotas
+              </label>
+
+              <select
+                className="venta-select"
+                value={cuotas}
+                onChange={(e) =>
+                  setCuotas(Number(e.target.value))
+                }
+              >
+                <option value={1}>
+                  1 cuota (sin recargo)
+                </option>
+
+                <option value={3}>
+                  3 cuotas (+10%)
+                </option>
+
+                <option value={6}>
+                  6 cuotas (+20%)
+                </option>
+              </select>
 
             </div>
 
-          </div>
+          )}
+          <div className="venta-total">
 
-          <h2>Total {formatARS(total)}</h2>
+            <h2>
+              Total: {formatARS(total)}
+            </h2>
+
+            {metodoPago === "Crédito" && (
+              <small>
+                Recargo aplicado:
+                {" "}
+                {porcentajeRecargo}%
+              </small>
+            )}
+
+          </div>
 
           <button
-            className="venta-confirmar"
+            className="venta-btn-confirmar"
             onClick={() => setModal(true)}
           >
-
             Confirmar Venta
-
           </button>
-
         </div>
-
       </div>
 
-      {modal && (
+      {/* =========================
+        MODAL PROFESIONAL
+    ========================= */}
+      {
+        modal && (
+          <div className="venta-modal-overlay">
+            <div className="venta-modal">
 
-        <div className="venta-modal-overlay">
+              <h3>Confirmar venta</h3>
 
-          <div className="venta-modal">
+              <div className="venta-modal-info">
+                <p><b>Vendedor:</b> {vendedor}</p>
+                <p><b>Total:</b> {formatARS(total)}</p>
+              </div>
 
-            <h3>Confirmar venta</h3>
+              <div className="venta-modal-actions">
+                <button
+                  className="venta-btn-cancelar"
+                  onClick={() => setModal(false)}
+                >
+                  Cancelar
+                </button>
 
-            <p>Vendedor: {vendedorSeleccionado}</p>
-            <p>Método: {metodoPago}</p>
-            <p>Total: {formatARS(total)}</p>
+                <button
+                  className="venta-btn-confirmar-modal"
+                  onClick={confirmarVenta}
+                >
+                  Confirmar
+                </button>
+              </div>
 
-            <button onClick={() => setModal(false)}>Cancelar</button>
-            <button onClick={confirmarVenta}>Confirmar</button>
-
+            </div>
           </div>
-
-        </div>
-
-      )}
-
-    </div>
-
+        )
+      }
+    </div >
   );
 
 }

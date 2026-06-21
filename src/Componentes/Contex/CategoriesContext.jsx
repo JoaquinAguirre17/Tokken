@@ -40,7 +40,7 @@ export const CategoriesProvider = ({ children }) => {
 
       while (hasMoreData) {
         const response = await axios.get(
-          "https://papayawhip-koala-105915.hostingersite.com/wp-json/wc/v3/products/categories",
+        /*  "https://papayawhip-koala-105915.hostingersite.com/wp-json/wc/v3/products/categories",*/
           {
             params: { page, per_page: perPage },
             headers: {
@@ -77,7 +77,7 @@ export const CategoriesProvider = ({ children }) => {
   const createCategory = async (categoryName) => {
     try {
       const response = await axios.post(
-        "https://papayawhip-koala-105915.hostingersite.com/wp-json/wc/v3/products/categories",
+        /*  "https://papayawhip-koala-105915.hostingersite.com/wp-json/wc/v3/products/categories",*/
         { name: categoryName },
         {
           headers: {
@@ -108,7 +108,7 @@ export const CategoriesProvider = ({ children }) => {
       }
 
       const response = await axios.post(
-        "https://papayawhip-koala-105915.hostingersite.com/wp-json/wc/v3/products/categories",
+        /*"https://papayawhip-koala-105915.hostingersite.com/wp-json/wc/v3/products/categories",*/
         { name: subcategoryName, parent: parentId },
         {
           headers: {
@@ -133,7 +133,7 @@ export const CategoriesProvider = ({ children }) => {
   const deleteCategory = async (categoryId) => {
     try {
       await axios.delete(
-        `https://papayawhip-koala-105915.hostingersite.com/wp-json/wc/v3/products/categories/${categoryId}?force=true`,
+        /*  `https://papayawhip-koala-105915.hostingersite.com/wp-json/wc/v3/products/categories/${categoryId}?force=true`,*/
         {
           headers: {
             Authorization:

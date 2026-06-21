@@ -15,18 +15,30 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   /* =========================
-     RESTAURAR SESIÓN AL INICIAR
+     RESTAURAR SESIÓN
   ========================= */
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     const savedSession = localStorage.getItem("sessionId");
 
+    console.log("👤 USER STORAGE:", savedUser);
+    console.log("🆔 SESSION STORAGE:", savedSession);
+
     if (savedUser && savedSession) {
-      setUser(JSON.parse(savedUser));
+
+      const parsedUser = JSON.parse(savedUser);
+
+      console.log("✅ RESTAURANDO USUARIO:", parsedUser);
+
+      setUser(parsedUser);
       setSessionId(savedSession);
 
       checkSession(savedSession);
+
     } else {
+
+      console.log("❌ NO HAY DATOS EN LOCALSTORAGE");
+
       setLoading(false);
     }
   }, []);
@@ -67,7 +79,6 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setUser(null);
       setSessionId(null);
-
       localStorage.clear();
     }
   };
@@ -83,23 +94,40 @@ export const AuthProvider = ({ children }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          sessionId: session || sessionId,
+          sessionId: session,
         }),
       });
 
-      const data = await res.json();
+      // 🔥 PROTECCIÓN ANTI-HTML / ERROR SERVER
+      const text = await res.text();
 
-      if (!data.ok) {
-        logout();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        console.warn("⚠️ Backend no devolvió JSON (Render/Woo/API caída)");
+        setLoading(false);
+        return; // ❌ NO logout
       }
+
+      // 🔥 SOLO LOGOUT SI ES EXPIRACIÓN REAL
+      if (data?.ok === false && data?.reason === "expired") {
+        logout();
+        return;
+      }
+
+      setLoading(false);
+
     } catch (error) {
-      console.error("Error checkSession:", error);
-      logout();
-    } finally {
+      console.warn("⚠️ checkSession falló (NO logout):", error);
       setLoading(false);
     }
   };
-
+  console.log("AUTH STATE:", {
+    user,
+    sessionId,
+    loading
+  });
   return (
     <AuthContext.Provider
       value={{
